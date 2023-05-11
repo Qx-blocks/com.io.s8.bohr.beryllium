@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
-import com.s8.io.bohr.beryllium.fields.MappedBeField;
-import com.s8.io.bohr.beryllium.object.BeSerialException;
-import com.s8.io.bohr.beryllium.syntax.BerylliumEncoding;
-import com.s8.io.bohr.beryllium.types.BeTypeBuildException;
+import com.s8.io.bohr.atom.BOHR_Types;
+import com.s8.io.bohr.beryllium.exception.BeBuildException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
+import com.s8.io.bohr.beryllium.fields.BeField;
+import com.s8.io.bohr.beryllium.fields.BeFieldComposer;
+import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
+import com.s8.io.bohr.beryllium.fields.BeFieldParser;
+import com.s8.io.bohr.beryllium.fields.BeFieldProperties;
+import com.s8.io.bohr.beryllium.fields.BeFieldPrototype;
+import com.s8.io.bohr.beryllium.object.BeObject;
 import com.s8.io.bytes.alpha.ByteInflow;
 import com.s8.io.bytes.alpha.ByteOutflow;
 import com.s8.io.bytes.alpha.MemoryFootprint;
@@ -15,123 +21,205 @@ import com.s8.io.bytes.alpha.MemoryFootprint;
 
 /**
  * 
- * @author pierreconvert
  *
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
+ * 
  */
-public class FloatBeField extends MappedBeField {
+public class FloatBeField extends PrimitiveBeField {
 
 
-	public final static Prototype PROTOTYPE = new MappedBeField.Prototype(float.class) {
+	public final static PrimitiveBeField.Prototype PROTOTYPE = new Prototype(float.class){
 
 		@Override
-		public FloatBeField createField(String name, long props, Field field) throws BeTypeBuildException {
-			return new FloatBeField(name, props, field);
+		public PrimitiveBeField.Builder createFieldBuilder(BeFieldProperties properties, Field field) {
+			return new FloatBeField.Builder(properties, field);
 		}
 	};
+
+
+	private static class Builder extends PrimitiveBeField.Builder {
+
+		public Builder(BeFieldProperties properties, Field handler) {
+			super(properties, handler);
+		}
+
+		@Override
+		public BeFieldPrototype getPrototype() {
+			return PROTOTYPE;
+		}
+
+		@Override
+		public BeField build(int ordinal) throws BeBuildException {
+			return new FloatBeField(ordinal, properties, field);
+		}		
+	}
+
+	/**
+	 * 
+	 * @param outboundTypeName
+	 * @param handler
+	 * @throws BeBuildException 
+	 */
+	public FloatBeField(int ordinal, BeFieldProperties properties, Field handler) throws BeBuildException{
+		super(ordinal, properties, handler);
+	}
 
 	@Override
 	public Prototype getPrototype() {
 		return PROTOTYPE;
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param handler
-	 */
-	public FloatBeField(String name, long props, Field field){
-		super(name, props, field);
+
+	@Override
+	public void computeFootprint(BeObject object, MemoryFootprint weight) {
+		weight.reportBytes(4);
 	}
 
 
 	@Override
-	public void readValue(Object object, ByteInflow inflow) throws BeSerialException {
-		try {
-			switch(inflow.getUInt8()) {
-			
-			case BerylliumEncoding.FLOAT32:
-				// read advertised encoding
-				field.setFloat(object, inflow.getFloat32());
-				break;
-				
-			case BerylliumEncoding.ZERO_FLOAT:
-				// read advertised encoding
-				field.setFloat(object, 0);
-				break;
-				
-			default : throw new BeSerialException("failed to write (I/O) with: "+name);
-			}
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to write (I/O) with: "+name, cause);
-		} 
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to write (field access) with: "+name, cause);
-		}
+	public void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException {
+		float value = field.getFloat(origin);
+		field.setFloat(clone, value);
 	}
 
 
 	@Override
-	public void writeValue(Object object, ByteOutflow outflow) throws BeSerialException {
-		try {
-			float val = field.getFloat(object);
-			if(val != 0) {
-				outflow.putUInt8(BerylliumEncoding.FLOAT32);
-				outflow.putFloat32(val);	
-			}
-			else {
-				outflow.putUInt8(BerylliumEncoding.ZERO_FLOAT);
-			}
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to write (I/O): "+name, cause);
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to write (field access) with: "+name, cause);
-		}
+	public boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException {
+		float baseValue = field.getFloat(base);
+		float updateValue = field.getFloat(update);
+		return baseValue != updateValue;
+	}
+
+	@Override
+	public BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException {
+		return new FloatBeFieldDelta(this, field.getFloat(object));
 	}
 
 
 	@Override
-	public void computeFootprint(Object object, MemoryFootprint weight) {
-		weight.reportBytes(8);
+	public void DEBUG_print(String indent) {
+		System.out.println(indent+name+": (float)");
 	}
 
 
 	@Override
-	public void deepClone(Object origin, Object clone) throws BeSerialException {
-		try {
-			field.setFloat(clone, field.getFloat(origin));	
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to deep clone (field access) for field: "+name, cause);
-		}
+	protected void printValue(BeObject object, Writer writer) 
+			throws IllegalArgumentException, IllegalAccessException, IOException {
+		writer.write(Float.toString(field.getFloat(object)));
 	}
+
+
+
+	/* <IO-inflow-section> */
 
 
 	@Override
-	public boolean hasDiff(Object base, Object update) throws BeSerialException {
-		try {
-			return field.getFloat(base) != field.getFloat(update);
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
+	public BeFieldParser createParser(ByteInflow inflow) throws IOException {
+		int code = inflow.getUInt8();
+		switch(code) {
+
+		case BOHR_Types.FLOAT32 : return new Float32Parser();
+		case BOHR_Types.FLOAT64 : return new Float64Parser();
+
+		default : throw new BeIOException("Failed to find field-inflow for code: "+Integer.toHexString(code));
 		}
 	}
 
 
 
+	private abstract class BaseParser extends BeFieldParser {
+
+		@Override
+		public FloatBeField getField() {
+			return FloatBeField.this;
+		}
+
+		@Override
+		public void parseValue(BeObject object, ByteInflow inflow) 
+				throws IllegalArgumentException, IllegalAccessException, IOException {
+			field.setFloat(object, deserialize(inflow));
+		}
+
+		@Override
+		public BeFieldDelta deserializeDelta(ByteInflow inflow) throws IOException {
+			return new FloatBeFieldDelta(FloatBeField.this, deserialize(inflow));
+		}
+
+		public abstract float deserialize(ByteInflow inflow) throws IOException;
+
+	}
+
+	private class Float32Parser extends BaseParser {
+		public @Override float deserialize(ByteInflow inflow) throws IOException {
+			return inflow.getFloat32();
+		}
+	}
+
+	private class Float64Parser extends BaseParser {
+		public @Override float deserialize(ByteInflow inflow) throws IOException {
+			return (float) inflow.getFloat64();
+		}
+	}
+	/* </IO-inflow-section> */
+
+
+	/* <IO-outflow-section> */
 	@Override
-	protected void printValue(Object object, Writer writer) throws BeSerialException {
-		try {
-			writer.write(Float.toString(field.getFloat(object)));
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to print values (field access) for field: "+name, cause);
+	public BeFieldComposer createComposer(int code) throws BeIOException {
+		switch(flow) {
+		case DEFAULT_FLOW_TAG: case "float32" : return new Float32Composer(code);
+		case "float64" : return new Float64Composer(code);
+		default : throw new BeIOException("Failed to find field-outflow for encoding: "+flow);
 		}
 	}
+
+
+	private abstract class BaseComposer extends BeFieldComposer {
+
+		public BaseComposer(int code) { super(code); }
+
+		@Override
+		public FloatBeField getField() {
+			return FloatBeField.this;
+		}
+
+
+		@Override
+		public void composeValue(BeObject object, ByteOutflow outflow)
+				throws IllegalArgumentException, IllegalAccessException, IOException {
+			serialize(outflow, field.getFloat(object));
+		}
+
+		@Override
+		public void publishValue(BeFieldDelta delta, ByteOutflow outflow) throws IOException {
+			serialize(outflow, ((FloatBeFieldDelta) delta).value);
+		}
+
+		public abstract void serialize(ByteOutflow outflow, float value) throws IOException;
+	}
+
+
+	private class Float32Composer extends BaseComposer {
+		public Float32Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.FLOAT32);
+		}
+		public @Override void serialize(ByteOutflow outflow, float value) throws IOException {
+			outflow.putFloat32(value);
+		}
+	}
+
+	private class Float64Composer extends BaseComposer {
+		public Float64Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.FLOAT64);
+		}
+		public @Override void serialize(ByteOutflow outflow, float value) throws IOException {
+			outflow.putFloat64((double) value);
+		}
+	}
+
+	/* <IO-outflow-section> */
 
 }

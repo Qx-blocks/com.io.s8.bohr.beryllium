@@ -5,112 +5,152 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 
 import com.s8.io.bohr.atom.S8ShellStructureException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.object.BeObject;
-import com.s8.io.bohr.beryllium.object.BeSerialException;
-import com.s8.io.bytes.alpha.Bool64;
 import com.s8.io.bytes.alpha.ByteInflow;
-import com.s8.io.bytes.alpha.ByteOutflow;
 import com.s8.io.bytes.alpha.MemoryFootprint;
 
 /**
  * 
- * @author pierreconvert
  *
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
+ * 
  */
 public abstract class BeField {
 
+	public final static String DEFAULT_FLOW_TAG = "(default)";
+
+	
+	public final int ordinal;
+	
+	
+	
+	public final Field field;
+
 	/**
 	 * 
-	 * @author pierreconvert
-	 *
-	 */
-	public static abstract class Prototype {
-		
-		
-		
-		/**
-		 * 
-		 * @return
-		 */
-		public abstract String getTypeName();
-
-	}
-	
-	
-
-
-	/**
-	 * The name of field. The only thing that is NEVER supposed to change
 	 */
 	public final String name;
 
-	public final Field field;
+	/**
+	 * 
+	 */
+	public final String flow;
 
-	public final Bool64 props;
+	/**
+	 * 
+	 */
+	public final long mask;
+
+	/**
+	 * 
+	 */
+	public final long flags;
 	
-	
-
-
-	public BeField(String name, long props, Field field) {
+	/**
+	 * 
+	 * @param properties
+	 * @param handler
+	 */
+	public BeField(int ordinal, BeFieldProperties properties, Field field) {
 		super();
-		this.name = name;
-		this.props = new Bool64(props);
+		
+		this.ordinal = ordinal;
+		
+		/* <field-properties> */
+		this.name = properties.getName();
+		this.flow = properties.getFlow();
+		this.mask = properties.getMask();
+		this.flags = properties.getFlags();
+		/* </field-properties> */
+		
+		/* <handler> */
 		this.field = field;
+		/* </handler> */
 	}
-	
 
-	public abstract Prototype getPrototype();
+
+	
+	
+	protected Field getHandler() {
+		return field;
+	}
 
 	
 	
 	
 	/**
 	 * 
-	 * @param map
-	 * @param object
-	 * @param inflow
-	 * @param bindings
-	 * @throws BkException
+	 * @param flow (null = use flow define in field)
+	 * @return
+	 * @throws  
 	 */
-	public abstract void readValue(Object object, ByteInflow inflow) throws BeSerialException;
+	public abstract BeFieldComposer createComposer(int code) throws BeIOException;
+	
+	
+	public abstract BeFieldParser createParser(ByteInflow inflow) throws IOException;
+	
+	
 
-	/*
-	 * public void write(S8Object object, ByteOutflow outflow) throws
-	 * S8ObjectIOException {
-	 * 
-	 * }
-	 */
 
-	public abstract void writeValue(Object object, ByteOutflow outflow) throws BeSerialException;
-
-	public abstract void computeFootprint(Object object, MemoryFootprint weight) throws BeSerialException;
+	public abstract void computeFootprint(BeObject object, MemoryFootprint weight) 
+			throws IllegalArgumentException, IllegalAccessException;
 
 	
+	
+
+	/**
+	 * Print field for debugging purposes
+	 * 
+	 * @param indent
+	 */
+	public abstract void DEBUG_print(String indent);
 
 	/**
 	 * 
 	 * @param clone
 	 * @param bindings
-	 * @throws GphSerialException
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 * @throws LthSerialException
 	 */
-	public abstract void deepClone(Object origin, Object clone) throws BeSerialException;
+	public abstract void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException;
 
 	/**
 	 * 
 	 * @param base
 	 * @param update
 	 * @param outflow
-	 * @throws GphSerialException
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 * @throws LthSerialException
 	 * @throws IOException
 	 */
-	public abstract boolean hasDiff(Object base, Object update) throws BeSerialException;
+	public abstract boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException;
+
+
+	/**
+	 * <p>
+	 * <b>IMPORTANT NOTICE<b>: It is often a good idea to track change AND remap at
+	 * the same time, that's why we take advantage of the scope
+	 * </p>
+	 * 
+	 * @param object
+	 * @param scope
+	 * @return
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 */
+	public abstract BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException;
 
 	
-	
-	
-	public void print(BeObject object, Writer writer) throws IOException, S8ShellStructureException {
+
+	public void print(BeObject object, Writer writer) 
+			throws IOException, S8ShellStructureException, IllegalArgumentException, IllegalAccessException {
 		writer.append("(");
-		writer.append(getPrototype().getTypeName());
+		writer.append(printType());
 		writer.append(") ");
 		writer.append(name);
 		writer.append(": ");
@@ -118,9 +158,24 @@ public abstract class BeField {
 	}
 	
 
+	/**
+	 * print standard name of field type
+	 */
+	public abstract String printType();
 
-	protected abstract void printValue(Object object, Writer writer) throws BeSerialException;
+
+	protected abstract void printValue(BeObject object, Writer writer) 
+			throws BeIOException, IllegalArgumentException, IllegalAccessException, IOException;
+
 	
+
+	/**
+	 * 
+	 * @param object
+	 * @return true is the object has been resolved, false otherwise
+	 * @throws LthSerialException 
+	 */
+	public abstract boolean isValueResolved(BeObject object) throws BeIOException;
 
 	
 }

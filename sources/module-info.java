@@ -10,7 +10,10 @@ module com.s8.io.bohr.beryllium {
 
 	/* <beryllium> */
 	exports com.s8.io.bohr.beryllium.codebase;
+	
 	exports com.s8.io.bohr.beryllium.fields;
+	exports com.s8.io.bohr.beryllium.fields.primitives;
+
 	exports com.s8.io.bohr.beryllium.object;
 	exports com.s8.io.bohr.beryllium.syntax;
 	exports com.s8.io.bohr.beryllium.tables;

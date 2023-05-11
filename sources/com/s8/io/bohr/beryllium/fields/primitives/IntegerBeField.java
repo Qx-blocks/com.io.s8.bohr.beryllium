@@ -4,171 +4,304 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
-import com.s8.io.bohr.beryllium.fields.MappedBeField;
-import com.s8.io.bohr.beryllium.object.BeSerialException;
-import com.s8.io.bohr.beryllium.syntax.BerylliumEncoding;
-import com.s8.io.bohr.beryllium.types.BeTypeBuildException;
+import com.s8.io.bohr.atom.BOHR_Types;
+import com.s8.io.bohr.beryllium.exception.BeBuildException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
+import com.s8.io.bohr.beryllium.fields.BeField;
+import com.s8.io.bohr.beryllium.fields.BeFieldComposer;
+import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
+import com.s8.io.bohr.beryllium.fields.BeFieldParser;
+import com.s8.io.bohr.beryllium.fields.BeFieldProperties;
+import com.s8.io.bohr.beryllium.fields.BeFieldPrototype;
+import com.s8.io.bohr.beryllium.object.BeObject;
 import com.s8.io.bytes.alpha.ByteInflow;
 import com.s8.io.bytes.alpha.ByteOutflow;
 import com.s8.io.bytes.alpha.MemoryFootprint;
 
-
 /**
  * 
- * @author pierreconvert
  *
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
+ * 
  */
-public class IntegerBeField extends MappedBeField {
+public class IntegerBeField extends PrimitiveBeField {
 
-
-	public final static Prototype PROTOTYPE = new MappedBeField.Prototype(int.class) {
+	public final static PrimitiveBeField.Prototype PROTOTYPE = new Prototype(int.class){
 
 		@Override
-		public IntegerBeField createField(String name, long props, Field field) throws BeTypeBuildException {
-			return new IntegerBeField(name, props, field);
+		public PrimitiveBeField.Builder createFieldBuilder(BeFieldProperties properties, Field handler) {
+			return new IntegerBeField.Builder(properties, handler);
 		}
 	};
 
 
+	private static class Builder extends PrimitiveBeField.Builder {
 
-
-	@Override
-	public void readValue(Object object, ByteInflow inflow) throws BeSerialException {
-		try {
-			
-			int value = 0;
-
-			switch(inflow.getUInt8()) {
-			
-			
-			case BerylliumEncoding.UINT8: value = inflow.getUInt8(); break;
-		
-			case BerylliumEncoding.INT16: value = inflow.getInt16(); break;
-				
-			case BerylliumEncoding.UINT16: value = inflow.getUInt16(); break;
-			
-			case BerylliumEncoding.INT32: value = inflow.getInt32(); break;
-				
-			case BerylliumEncoding.UINT31: value = inflow.getUInt31(); break;
-
-			case BerylliumEncoding.ZERO_INT: value = 0; break;
-
-			default: throw new BeSerialException("failed to write (I/O) with: "+name);
-
-			}
-			
-			field.setInt(object, value);
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to write (I/O) with: "+name, cause);
-		} 
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to write (field access) with: "+name, cause);
+		public Builder(BeFieldProperties properties, Field handler) {
+			super(properties, handler);
 		}
+
+		@Override
+		public BeFieldPrototype getPrototype() {
+			return PROTOTYPE;
+		}
+
+		@Override
+		public BeField build(int ordinal) throws BeBuildException {
+			return new IntegerBeField(ordinal, properties, field);
+		}		
 	}
 
-
-	@Override
-	public void writeValue(Object object, ByteOutflow outflow) throws BeSerialException {
-		try {
-			int value = field.getInt(object);
-			
-			if(value==0) {
-				outflow.putUInt8(BerylliumEncoding.ZERO_INT);
-			}
-			else if(value>0) {
-				if(value<0xff) {
-					outflow.putUInt8(BerylliumEncoding.UINT8);
-					outflow.putUInt8(value);
-				}
-				else if(value<0xffff) {
-					outflow.putUInt8(BerylliumEncoding.UINT16);
-					outflow.putUInt16(value);
-				}
-				else if(value<0xffffffff) {
-					outflow.putUInt8(BerylliumEncoding.UINT31);
-					outflow.putUInt32(value);
-				}
-			}
-			else {
-				if(-value<0x7fff) {
-					outflow.putUInt8(BerylliumEncoding.INT16);
-					outflow.putInt16((short) value);
-				}
-				else {
-					outflow.putUInt8(BerylliumEncoding.INT32);
-					outflow.putInt32(value);
-				}
-			}
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to write (I/O): "+name, cause);
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to write (field access) with: "+name, cause);
-		}
+	/**
+	 * 
+	 * @param outboundTypeName
+	 * @param handler
+	 * @throws BeBuildException 
+	 */
+	public IntegerBeField(int ordinal, BeFieldProperties properties, Field handler) throws BeBuildException{
+		super(ordinal, properties, handler);
 	}
-
-
-
 
 	@Override
 	public Prototype getPrototype() {
 		return PROTOTYPE;
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param handler
-	 */
-	public IntegerBeField(String name, long props, Field field){
-		super(name, props, field);
-	}
-
-
-
-
 	@Override
-	public void computeFootprint(Object object, MemoryFootprint weight) {
-		weight.reportBytes(8);
+	public void computeFootprint(BeObject object, MemoryFootprint weight) {
+		weight.reportBytes(4);
 	}
 
 
 	@Override
-	public void deepClone(Object origin, Object clone) throws BeSerialException {
-		try {
-			field.setInt(clone, field.getInt(origin));	
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to deep clone (field access) for field: "+name, cause);
-		}
+	public void deepClone(BeObject origin, BeObject clone) 
+			throws IllegalArgumentException, IllegalAccessException {
+		int value = field.getInt(origin);
+		field.setInt(clone, value);
+	}
+
+	@Override
+	public boolean hasDiff(BeObject base, BeObject update) 
+			throws IllegalArgumentException, IllegalAccessException {
+		int baseValue = field.getInt(base);
+		int updateValue = field.getInt(update);
+		return baseValue != updateValue;
+	}
+
+	@Override
+	public BeFieldDelta produceDiff(BeObject object) 
+			throws IllegalArgumentException, IllegalAccessException {
+		return new IntegerBeFieldDelta(this, field.getInt(object));
 	}
 
 
 	@Override
-	public boolean hasDiff(Object base, Object update) throws BeSerialException {
-		try {
-			return field.getInt(base) != field.getInt(update);
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
-		}
+	public void DEBUG_print(String indent) {
+		System.out.println(indent+name+": (long)");
 	}
 
 
 
 	@Override
-	protected void printValue(Object object, Writer writer) throws BeSerialException {
-		try {
-			writer.write(Integer.toString(field.getInt(object)));
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to print values (field access) for field: "+name, cause);
+	protected void printValue(BeObject object, Writer writer) throws IllegalArgumentException, IllegalAccessException, IOException  {
+		writer.write(Integer.toString(field.getInt(object)));
+	}
+
+
+	/* <IO-inflow-section> */
+
+
+	@Override
+	public BeFieldParser createParser(ByteInflow inflow) throws IOException {
+		int code = inflow.getUInt8();
+		switch(code) {
+
+		case BOHR_Types.UINT8 : return new UInt8Parser();
+		case BOHR_Types.UINT16 : return new UInt16Parser();
+		case BOHR_Types.UINT32 : return new UInt32Parser();
+
+		case BOHR_Types.INT8 : return new Int8Parser();
+		case BOHR_Types.INT16 : return new Int16Parser();
+		case BOHR_Types.INT32 : return new Int32Parser();
+
+		default : throw new BeIOException("Failed to find field-inflow for code: "+Integer.toHexString(code));
 		}
 	}
+
+
+
+	private abstract class BaseParser extends BeFieldParser {
+
+		@Override
+		public IntegerBeField getField() {
+			return IntegerBeField.this;
+		}
+
+		@Override
+		public void parseValue(BeObject object, ByteInflow inflow) 
+				throws IOException, IllegalArgumentException, IllegalAccessException {
+			field.setInt(object, deserialize(inflow));
+		}
+
+		@Override
+		public BeFieldDelta deserializeDelta(ByteInflow inflow) throws IOException {
+			return new IntegerBeFieldDelta(IntegerBeField.this, deserialize(inflow));
+		}
+
+		public abstract int deserialize(ByteInflow inflow) throws IOException;
+
+	}
+
+	private class UInt8Parser extends BaseParser {
+		public @Override int deserialize(ByteInflow inflow) throws IOException {
+			return (int) inflow.getUInt8();
+		}
+	}
+
+	private class UInt16Parser extends BaseParser {
+		public @Override int deserialize(ByteInflow inflow) throws IOException {
+			return inflow.getUInt16();
+		}
+	}
+
+	private class UInt32Parser extends BaseParser {
+		public @Override int deserialize(ByteInflow inflow) throws IOException {
+			return inflow.getUInt8();
+		}
+	}
+
+	private class Int8Parser extends BaseParser {
+		public @Override int deserialize(ByteInflow inflow) throws IOException {
+			return inflow.getInt8();
+		}
+	}
+
+	private class Int16Parser extends BaseParser {
+		public @Override int deserialize(ByteInflow inflow) throws IOException {
+			return inflow.getInt16();
+		}
+	}
+
+	private class Int32Parser extends BaseParser {
+		public @Override int deserialize(ByteInflow inflow) throws IOException {
+			return inflow.getInt32();
+		}
+	}
+
+	/* </IO-inflow-section> */
+
+
+	/* <IO-outflow-section> */
+
+	@Override
+	public BeFieldComposer createComposer(int code) throws BeIOException {
+		switch(flow) {
+
+		case "uint8" : return new UInt8Composer(code);
+		case "uint16" : return new UInt16Composer(code);
+		case "uint32" : return new UInt32Composer(code);
+
+		case "int8" : return new Int8Composer(code);
+		case "int16" : return new Int16Composer(code);
+		case DEFAULT_FLOW_TAG: case "int32" : return new Int32Composer(code);
+
+		default : throw new BeIOException("Failed to find field-outflow for encoding: "+flow);
+		}
+	}
+
+
+	private abstract class BaseComposer extends BeFieldComposer {
+
+		public BaseComposer(int code) {
+			super(code);
+		}
+
+
+		@Override
+		public IntegerBeField getField() {
+			return IntegerBeField.this;
+		}
+
+
+		@Override
+		public void composeValue(BeObject object, ByteOutflow outflow) 
+				throws IOException, IllegalArgumentException, IllegalAccessException {
+			serialize(outflow, field.getInt(object));
+		}
+
+		@Override
+		public void publishValue(BeFieldDelta delta, ByteOutflow outflow) throws IOException {
+			serialize(outflow, ((IntegerBeFieldDelta) delta).value);
+		}
+
+		public abstract void serialize(ByteOutflow outflow, int value) throws IOException;
+	}
+
+
+	private class UInt8Composer extends BaseComposer {
+		public UInt8Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.UINT8);
+		}
+		public @Override void serialize(ByteOutflow outflow, int value) throws IOException {
+			outflow.putUInt8(value);
+		}
+	}
+
+	private class UInt16Composer extends BaseComposer {
+		public UInt16Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.UINT16);
+		}
+		public @Override void serialize(ByteOutflow outflow, int value) throws IOException {
+			outflow.putUInt16(value);
+		}
+	}
+
+	private class UInt32Composer extends BaseComposer {
+		public UInt32Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.UINT32);
+		}
+		public @Override void serialize(ByteOutflow outflow, int value) throws IOException {
+			outflow.putUInt32(value);
+		}
+	}
+
+
+	private class Int8Composer extends BaseComposer {
+		public Int8Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.INT8);
+		}
+		public @Override void serialize(ByteOutflow outflow, int value) throws IOException {
+			outflow.putInt8((byte) value);
+		}
+	}
+
+	private class Int16Composer extends BaseComposer {
+		public Int16Composer(int code) { super(code); }
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.INT16);
+		}
+		public @Override void serialize(ByteOutflow outflow, int value) throws IOException {
+			outflow.putInt16((short) value);
+		}
+	}
+
+	private class Int32Composer extends BaseComposer {
+		
+		public Int32Composer(int code) { super(code); }
+		
+		public @Override void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.INT32);
+		}
+		
+		public @Override void serialize(ByteOutflow outflow, int value) throws IOException {
+			outflow.putInt32(value);
+		}
+	}	
+	/* <IO-outflow-section> */
 
 }

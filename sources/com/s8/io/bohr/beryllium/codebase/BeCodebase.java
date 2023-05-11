@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.types.BeType;
 
 
@@ -31,10 +32,40 @@ import com.s8.io.bohr.beryllium.types.BeType;
  * <li>Step<b>#4</b>: (Subsequent uses) When booting, server must generate <code>GphCodebase</code> using <code>GphCodebaseBuilder</code>, then
  * use the <code>GphCodebase.parse()</code> method to retrieve the proper encoding.</li>
  * </ul>
- * @author pc
+ * 
+ * 
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
  *
  */
 public class BeCodebase {
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param classes
+	 * @param isVerbose
+	 * @return
+	 * @throws NdBuildException
+	 */
+	public static BeCodebase from(Class<?>[] classes, boolean isVerbose) throws BeBuildException {
+		BeCodebaseBuilder codebaseBuilder = new BeCodebaseBuilder(isVerbose);
+		codebaseBuilder.pushObjectTypes(classes);
+		return codebaseBuilder.build();
+	}
+	
+	/**
+	 * 
+	 * @param classes
+	 * @return
+	 * @throws NdBuildException
+	 */
+	public static BeCodebase from(Class<?>... classes) throws BeBuildException {
+		return from(classes, false);
+	}
+	
 
 
 	
@@ -90,13 +121,11 @@ public class BeCodebase {
 		return isVerbose;
 	}
 	
-	
-	/**
-	 * 
-	 * @param type
-	 */
 	void put(BeType type){
-		typesBySerialName.put(type.getSerialName(), type);	
+		
+		
+		typesBySerialName.put(type.getSerialName(), type);
+		
 		typesByRuntimeName.put(type.getBaseType().getName(), type);
 	}
 
@@ -139,16 +168,12 @@ public class BeCodebase {
 	}
 	
 
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 */
+
+
 	public boolean isTypeKnown(Class<?> type) {
 		return typesByRuntimeName.containsKey(type.getName());
 	}
 
-	
 	/**
 	 * 
 	 * @param prototype
@@ -158,17 +183,8 @@ public class BeCodebase {
 	public BeType getType(Object object) {
 		return typesByRuntimeName.get(object.getClass().getName());
 	}
-	
-	
-	
-	public BeType getType(Class<?> c) {
-		return typesByRuntimeName.get(c.getName());
-	}
 
 
-	/**
-	 * 
-	 */
 	public void DEBUG_print() {
 		typesBySerialName.forEach((name, type) -> type.DEBUG_print(""));
 	}

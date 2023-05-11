@@ -1,122 +1,303 @@
 package com.s8.io.bohr.beryllium.types;
 
+
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import com.s8.io.bohr.atom.S8ShellStructureException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeField;
-import com.s8.io.bohr.beryllium.object.BeSerialException;
+import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
+import com.s8.io.bohr.beryllium.object.BeObject;
+import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**
  * 
- * @author pierreconvert
  *
- * @param <R>
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
+ * 
  */
 public class BeType {
 
-	
-	
-	private final Class<?> baseType;
-	
-	String serialName;
-	
+
+	/**
+	 * 
+	 */
+	protected final Class<?> baseType;
+
+
+
+	/**
+	 * 
+	 */
 	Constructor<?> constructor;
-	
-	Map<String, BeField> map;
-	
+
+
+
+
+
+	/**
+	 * <p><b>/!\ WARNING </b></p>
+	 * code for serialization / deserialization
+	 */
+	String name;
+
+
+
+
+	/**
+	 * fields
+	 */
+	public Map<String, BeField> fieldsByName;
+
+
+	/**
+	 * fields by ordinal number
+	 */
+	public BeField[] fields;
+
+
+
+
+	private final DebugModule debugModule;
+
+
+
+	/**
+	 * The number of references to be stored in vertex
+	 */
+	int nVertexReferences;
+
+
 	public BeType(Class<?> baseType) {
 		super();
 		this.baseType = baseType;
-		this.map = new HashMap<>();
+
+		nVertexReferences = 0;
+
+		// modules
+		debugModule = new DebugModule(this);
 	}
 
-	public BeField getField(String name) {
-		return map.get(name);
-	}
-	
 
-	/**
-	 * 
-	 * @return
-	 */
+
+
+	public int getNumberOfFields() {
+		return fields.length;
+	}
+
+
+
+
+	public Class<?> getBaseType(){
+		return baseType;
+	}
+
 	public String getSerialName() {
-		return serialName;
+		return name;
 	}
-	
-	
+
+	public String getRuntimeName() {
+		return baseType.getName();
+	}
+
+
+
+	/**
+	 * 
+	 * @param object
+	 * @param footprint
+	 */
+	public void computeFootprint(BeObject object, MemoryFootprint footprint) {
+		footprint.reportInstance();
+		fieldsByName.forEach((name, handler) -> {  
+			try {
+				footprint.reportEntry();
+
+				handler.computeFootprint(object, footprint);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			} 
+		});
+	}
+
+
+
 	/**
 	 * 
 	 * @return
-	 * @throws BeSerialException
+	 * @throws LthSerialException
 	 */
-	public Object createInstance() throws BeSerialException {
+	public BeObject createNewInstance() throws BeIOException {
 		try {
-			return constructor.newInstance(new Object[]{});
+			return (BeObject) constructor.newInstance(new Object[]{});
 		}
 		catch (InstantiationException 
 				| IllegalAccessException 
 				| IllegalArgumentException
 				| InvocationTargetException e) {
 			e.printStackTrace();
-			throw new BeSerialException("Failed to create new instance of type: "+baseType, e);
+			throw new BeIOException("instance creation failed due to constructor call error", baseType, e);
 		}
 	}
-	
-	
 
-	public BeTypeIO generateIO() {
-		int nFields = map.size();
-		BeField[] fields = new BeField[nFields];
-		int i=0;
-		for(Entry<String, BeField> entry : map.entrySet()) {
-			fields[i++] = entry.getValue();
-		}
-		return new BeTypeIO(this, fields);
+	public final static byte[] CODEBASE_ENTRY = "<e/>".getBytes(StandardCharsets.US_ASCII);
+
+
+
+
+
+
+	/**
+	 * Field accessor
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public BeField getField(String name) {
+		return fieldsByName.get(name);
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 
-	 * @param left
-	 * @param right
+	 * @param origin
+	 * @param context
 	 * @return
-	 * @throws BeSerialException
+	 * @throws LthSerialException
 	 */
-	public boolean hasDiff(Object left, Object right, boolean isVerbose) throws BeSerialException {
-		for(Entry<String, BeField> entry : map.entrySet()) {
-			if(entry.getValue().hasDiff(left, right)) {
-				if(isVerbose) {
-					System.out.println("Diff for field: "+entry.getKey());
-				}
-				return true;
+	public BeObject deepClone(BeObject origin) throws BeIOException {
+		try {
+			BeObject clone = createNewInstance();
+			for(BeField field : fields) {
+
+				field.deepClone(origin, clone);
+
+			}
+			return clone;
+		} 
+		catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new BeIOException(e.getMessage());
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * 
+	 * @param indent
+	 */
+	public void DEBUG_print(String indent) {
+		System.out.println(indent+"S8Object Type, name = "+getSerialName());
+		System.out.println(indent+" fields:{");
+		fieldsByName.forEach((name, field) -> { field.DEBUG_print(indent+"   "); });
+		System.out.println(indent+" }\n");
+	}
+
+	/**
+	 * 
+	 * @param object
+	 * @param inflow
+	 * @param context
+	 * @throws IOException
+	 * @throws S8ShellStructureException 
+	 */
+	public void print(BeObject object, Writer writer) throws BeIOException {
+		try {
+			debugModule.print(object, writer);
+		} 
+		catch (IllegalArgumentException | IllegalAccessException | IOException | S8ShellStructureException e) {
+			e.printStackTrace();
+			throw new BeIOException(e.getMessage());
+		}
+	}
+
+
+	/**
+	 * 
+	 * @param value
+	 * @param inflow
+	 * @param context
+	 * @throws IOException
+	 * @throws S8ShellStructureException 
+	 */
+	public void deepCompare(BeObject left, BeObject right, Writer writer) throws BeIOException {
+		try {
+			debugModule.deepCompare(left, right, writer);
+		} 
+		catch (IllegalArgumentException | IllegalAccessException | IOException | S8ShellStructureException e) {
+			e.printStackTrace();
+			throw new BeIOException(e.getMessage());
+		}
+	}
+
+
+	public boolean equals(BeType right) {
+		return getSerialName().equals(right.getSerialName());
+	}
+
+	public int getNumberOfVertexReferences() {
+		return nVertexReferences;
+	}
+
+
+
+	/**
+	 * 
+	 * @param object
+	 * @param inflow
+	 * @param scope
+	 * @throws IOException
+	 */
+	public void consumeDiff(BeObject object, List<BeFieldDelta> deltas) throws BeIOException {
+		for(BeFieldDelta delta : deltas) {
+			try {
+				delta.consume(object);
+			} 
+			catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new BeIOException(e.getMessage());
 			}
 		}
-		return false;
-		
 	}
+
+
+
+
+
 
 	/**
 	 * 
-	 * @param string
+	 * @param index
+	 * @param object
+	 * @param scope
 	 * @return
+	 * @throws IOException
 	 */
-	public Object DEBUG_print(String string) {
-		return serialName;
+	public List<BeFieldDelta> produceCreateDeltas(BeObject object) throws IOException {
+		int n = fields.length;
+		List<BeFieldDelta> deltas = new ArrayList<BeFieldDelta>(n);
+		for(int i=0; i<n; i++) {
+			try {
+				deltas.add(fields[i].produceDiff(object));
+			} 
+			catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new BeIOException(e.getMessage());
+			}
+		}
+		return deltas;
 	}
-
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Class<?> getBaseType() {
-		return baseType;
-	}
-	
 
 }

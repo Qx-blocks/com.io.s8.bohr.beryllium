@@ -1,7 +1,8 @@
 package com.s8.io.bohr.beryllium.demos;
 
 import com.s8.io.bohr.atom.annotations.S8Field;
-import com.s8.io.bohr.atom.annotations.S8RowType;
+import com.s8.io.bohr.atom.annotations.S8ObjectType;
+import com.s8.io.bohr.beryllium.object.BeObject;
 
 
 /**
@@ -9,13 +10,9 @@ import com.s8.io.bohr.atom.annotations.S8RowType;
  * @author pierreconvert
  *
  */
-public @S8RowType(name = "storage-entry") final class MyStorageEntry {
+@S8ObjectType(name = "storage-entry")
+public final class MyStorageEntry extends BeObject {
 
-	
-	@S8Field(name = "id") 
-	public String id;
-	
-	
 	
 	public enum Category {
 		FURNITURE, ELECTRICAL_APPLIANCES, POWER_TOOLS, GARDEN;
@@ -53,8 +50,8 @@ public @S8RowType(name = "storage-entry") final class MyStorageEntry {
 	/**
 	 * 
 	 */
-	public MyStorageEntry() {
-		super();
+	public MyStorageEntry(String id) {
+		super(id);
 	}
 	
 	
@@ -63,7 +60,8 @@ public @S8RowType(name = "storage-entry") final class MyStorageEntry {
 	 * @return
 	 */
 	public static MyStorageEntry generateRandom() {
-		MyStorageEntry entry = new MyStorageEntry();
+		String id = "CODE_TRGE_"+System.nanoTime()+ ((int) (256*Math.random()));
+		MyStorageEntry entry = new MyStorageEntry(id);
 		entry.shuffle();
 		return entry;
 	}
@@ -73,7 +71,6 @@ public @S8RowType(name = "storage-entry") final class MyStorageEntry {
 	 * 
 	 */
 	public void shuffle() {
-		id = "CODE_TRGE_"+System.nanoTime()+ ((int) (256*Math.random()));
 		category = Category.values()[(int) (4*Math.random())];
 		quantity = (int) (1024*Math.random());
 		isStored = Math.random()<0.5;
@@ -81,6 +78,20 @@ public @S8RowType(name = "storage-entry") final class MyStorageEntry {
 		lattitude = 2*(Math.random()-0.5)*90;
 		longitude = Math.random()*360;
 		timestamp = System.currentTimeMillis();
+	}
+
+
+	@Override
+	public MyStorageEntry deepCopy() {
+		MyStorageEntry copy = new MyStorageEntry(S8_id);
+		copy.category = category;
+		copy.quantity = quantity;
+		copy.isStored = isStored;
+		copy.size = size;
+		copy.lattitude = lattitude;
+		copy.longitude = longitude;
+		copy.timestamp = timestamp;
+		return copy;
 	}
 
 }

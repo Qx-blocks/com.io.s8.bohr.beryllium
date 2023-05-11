@@ -1,7 +1,9 @@
 package com.s8.io.bohr.beryllium.demos;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
+import com.s8.io.bohr.beryllium.tables.BerylTable;
 import com.s8.io.bohr.beryllium.types.BeTypeBuildException;
 
 public class Roundtrip02 extends Workbench {
@@ -18,7 +20,6 @@ public class Roundtrip02 extends Workbench {
 	
 	public void test01() throws IOException {
 		
-		/*
 		String address = "002134";
 		Path path = Path.of("data/table01/");
 	
@@ -34,7 +35,7 @@ public class Roundtrip02 extends Workbench {
 		MyStorageEntry entry;
 		for(int i=0; i<nObjects; i++) {
 			entry = objects[i];
-			new PutM3Request<Object>(table, entry.id, entry, false).serve();
+			new PutM3Request<Object>(table, entry.S8_id, entry, false).serve();
 			if(i % 1000 == 0) {
 				System.out.println("Added: "+i);
 			}
@@ -49,7 +50,7 @@ public class Roundtrip02 extends Workbench {
 		System.out.println("Check started...");
 		for(int i=0; i<nObjects; i++) {
 			MyStorageEntry entry0 = objects[i];
-			GetM3Request<Object> request = new GetM3Request<Object>(table, entry0.id);
+			GetM3Request<Object> request = new GetM3Request<Object>(table, entry0.S8_id);
 			MyStorageEntry entry1 = (MyStorageEntry) request.getValue();
 			if(type.hasDiff(entry0, entry1, true)) {
 				System.out.println("Diff!!!");
@@ -59,7 +60,7 @@ public class Roundtrip02 extends Workbench {
 			}
 		}
 		System.out.println("Check done!");
-		*/
+		
 	}
 
 

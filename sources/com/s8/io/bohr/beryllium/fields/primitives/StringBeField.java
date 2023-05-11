@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
-import com.s8.io.bohr.beryllium.fields.MappedBeField;
-import com.s8.io.bohr.beryllium.object.BeSerialException;
-import com.s8.io.bohr.beryllium.syntax.BerylliumEncoding;
-import com.s8.io.bohr.beryllium.types.BeTypeBuildException;
+import com.s8.io.bohr.atom.BOHR_Types;
+import com.s8.io.bohr.beryllium.exception.BeBuildException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
+import com.s8.io.bohr.beryllium.fields.BeField;
+import com.s8.io.bohr.beryllium.fields.BeFieldComposer;
+import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
+import com.s8.io.bohr.beryllium.fields.BeFieldParser;
+import com.s8.io.bohr.beryllium.fields.BeFieldProperties;
+import com.s8.io.bohr.beryllium.fields.BeFieldPrototype;
+import com.s8.io.bohr.beryllium.object.BeObject;
 import com.s8.io.bytes.alpha.ByteInflow;
 import com.s8.io.bytes.alpha.ByteOutflow;
 import com.s8.io.bytes.alpha.MemoryFootprint;
@@ -15,159 +21,202 @@ import com.s8.io.bytes.alpha.MemoryFootprint;
 
 /**
  * 
- * @author pierreconvert
  *
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
+ * 
  */
-public abstract class StringBeField extends MappedBeField {
+public class StringBeField extends PrimitiveBeField {
 
 
-	public final static Prototype PROTOTYPE = new MappedBeField.Prototype(String.class) {
+	public final static StringBeField.Prototype PROTOTYPE = new Prototype(String.class){
 
 		@Override
-		public StringBeField createField(String name, long props, Field field) throws BeTypeBuildException {
-			return new L32UTF8_Encoded(name, props, field);
+		public PrimitiveBeField.Builder createFieldBuilder(BeFieldProperties properties, Field handler) {
+			return new StringBeField.Builder(properties, handler);
 		}
 	};
 
-	private static class L32UTF8_Encoded extends StringBeField {
 
+	private static class Builder extends PrimitiveBeField.Builder {
 
-		public L32UTF8_Encoded(String name, long props, Field field) {
-			super(name, props,  field);
+		public Builder(BeFieldProperties properties, Field handler) {
+			super(properties, handler);
 		}
-
 
 		@Override
-		public void readValue(Object object, ByteInflow inflow) throws BeSerialException {
-			try {
-				switch(inflow.getUInt8()) {
-				case BerylliumEncoding.L32_STRING_UTF8:
-					// read advertised encoding
-					field.set(object, inflow.getStringUTF8());
-					break;
-
-				case BerylliumEncoding.NULL_STRING:
-					field.set(object, null);
-					break;
-
-				default : throw new BeSerialException("failed to write (I/O) with: "+name);
-				}
-
-			} 
-			catch (IOException cause) {
-				throw new BeSerialException("failed to write (I/O) with: "+name, cause);
-			} 
-			catch (IllegalArgumentException | IllegalAccessException cause) {
-				throw new BeSerialException("failed to write (field access) with: "+name, cause);
-			}
+		public BeFieldPrototype getPrototype() {
+			return PROTOTYPE;
 		}
-
 
 		@Override
-		public void writeValue(Object object, ByteOutflow outflow) throws BeSerialException {
-			try {
-				String val = (String) field.get(object);
-				if(val!=null) {
-					outflow.putUInt8(BerylliumEncoding.L32_STRING_UTF8);
-					outflow.putStringUTF8(val);	
-				}
-				else {
-					outflow.putUInt8(BerylliumEncoding.NULL_STRING);
-				}
-			} 
-			catch (IOException cause) {
-				throw new BeSerialException("failed to write (I/O): "+name, cause);
-			}
-			catch (IllegalArgumentException | IllegalAccessException cause) {
-				throw new BeSerialException("failed to write (field access) with: "+name, cause);
-			}
-		}
-
+		public BeField build(int ordinal) throws BeBuildException {
+			return new StringBeField(ordinal, properties, field);
+		}		
 	}
 
 
+	/**
+	 * 
+	 * @param outboundTypeName
+	 * @param handler
+	 * @throws BeBuildException 
+	 */
+	public StringBeField(int ordinal, BeFieldProperties properties, Field handler) throws BeBuildException{
+		super(ordinal, properties, handler);
+	}
+	
 
 	@Override
 	public Prototype getPrototype() {
 		return PROTOTYPE;
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param handler
-	 */
-	public StringBeField(String name, long props, Field field){
-		super(name, props, field);
+	
+	
+	@Override
+	public StringBeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException {
+		return new StringBeFieldDelta(this, (String) field.get(object));
+	}
+
+
+	@Override
+	public void computeFootprint(BeObject object, MemoryFootprint weight) 
+			throws IllegalArgumentException, IllegalAccessException{
+		String value = (String) field.get(object);
+		if(value!=null) {
+			weight.reportInstance();
+			weight.reportBytes(value.length());
+		}
+	}
+
+	@Override
+	public void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException {
+		String value = (String) field.get(origin);
+		field.set(clone, value);
+	}
+
+
+	@Override
+	public boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException {
+		String baseValue = (String) field.get(base);
+		String updateValue = (String) field.get(update);
+		if(baseValue==null && updateValue==null) {
+			return false;
+		}
+		else if((baseValue!=null && updateValue==null) || (baseValue==null && updateValue!=null)) {
+			return true;
+		}
+		else {
+			return !baseValue.equals(updateValue);	
+		}
+	}
+
+
+	@Override
+	public void DEBUG_print(String indent) {
+		System.out.println(indent+name+": (String)");
 	}
 
 
 
 	@Override
-	public void computeFootprint(Object object, MemoryFootprint weight) {
-		weight.reportBytes(8);
+	protected void printValue(BeObject object, Writer writer) 
+			throws IOException, IllegalArgumentException, IllegalAccessException {
+		String val = (String) field.get(object);
+		writer.write(val!=null ? val : "<null>");
 	}
+
+
+	
+
+
+	/* </delta> */
+
+
+
+
+	/* <IO-inflow-section> */
 
 
 	@Override
-	public void deepClone(Object origin, Object clone) throws BeSerialException {
-		try {
-			field.set(clone, field.get(origin));	
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to deep clone (field access) for field: "+name, cause);
-		}
-	}
+	public BeFieldParser createParser(ByteInflow inflow) throws IOException {
+		int code = inflow.getUInt8();
+		switch(code) {
 
+		case BOHR_Types.STRING_UTF8 : return new UTF8Parser();
 
-	@Override
-	public boolean hasDiff(Object base, Object update) throws BeSerialException {
-		try {
-			String baseValue = (String) field.get(base);
-			String updateValue = (String) field.get(update);
-			if(baseValue==null && updateValue==null) {
-				return false;
-			}
-			else if((baseValue == null && updateValue!=null) || (baseValue != null && updateValue==null)) {
-				return true;
-			}
-			else {
-				return !baseValue.equals(updateValue);
-			}
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
+		default : throw new BeIOException("Failed to find field-inflow for code: "+Integer.toHexString(code));
 		}
 	}
 
 
 
-	@Override
-	protected void printValue(Object object, Writer writer) throws BeSerialException {
-		try {
-			writer.write((String) field.get(object));
+	private class UTF8Parser extends BeFieldParser {
+
+		@Override
+		public StringBeField getField() {
+			return StringBeField.this;
 		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to print values (field access) for field: "+name, cause);
+
+		@Override
+		public void parseValue(BeObject object, ByteInflow inflow) 
+				throws IOException, IllegalArgumentException, IllegalAccessException {
+			field.set(object, inflow.getStringUTF8());
+		}
+
+		@Override
+		public BeFieldDelta deserializeDelta(ByteInflow inflow) throws IOException {
+			return new StringBeFieldDelta(StringBeField.this, inflow.getStringUTF8());
+		}
+
+
+	}
+
+	/* </IO-inflow-section> */
+
+
+	/* <IO-outflow-section> */
+
+	public BeFieldComposer createComposer(int code) throws BeIOException {
+		switch(flow) {
+		case DEFAULT_FLOW_TAG:
+		case "StringUTF8" : return new UTF8Composer(code);
+		default : throw new BeIOException("Failed to find field-outflow for encoding: "+flow);
 		}
 	}
 
 
-	/**
-	 * Use this method to get hash
-	 * @param object
-	 * @return
-	 * @throws BeSerialException
-	 */
-	public String getValue(Object object) throws BeSerialException {
-		try {
-			return (String) field.get(object);
+	private class UTF8Composer extends BeFieldComposer {
+
+		public UTF8Composer(int code) {
+			super(code);
 		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
+
+		@Override
+		public StringBeField getField() {
+			return StringBeField.this;
+		}
+
+		@Override
+		public void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.STRING_UTF8);
+		}
+
+		@Override
+		public void composeValue(BeObject object, ByteOutflow outflow) 
+				throws IOException, IllegalArgumentException, IllegalAccessException {
+			outflow.putStringUTF8((String) field.get(object));
+		}
+
+		@Override
+		public void publishValue(BeFieldDelta delta, ByteOutflow outflow) throws IOException {
+			outflow.putStringUTF8(((StringBeFieldDelta) delta).value);	
 		}
 	}
+
+
+	/* <IO-outflow-section> */	
+
+
 }

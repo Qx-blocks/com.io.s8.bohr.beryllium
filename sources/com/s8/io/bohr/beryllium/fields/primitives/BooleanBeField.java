@@ -4,128 +4,198 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
-import com.s8.io.bohr.beryllium.fields.MappedBeField;
-import com.s8.io.bohr.beryllium.object.BeSerialException;
-import com.s8.io.bohr.beryllium.syntax.BerylliumEncoding;
-import com.s8.io.bohr.beryllium.types.BeTypeBuildException;
+import com.s8.io.bohr.atom.BOHR_Types;
+import com.s8.io.bohr.atom.S8BuildException;
+import com.s8.io.bohr.beryllium.exception.BeBuildException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
+import com.s8.io.bohr.beryllium.fields.BeField;
+import com.s8.io.bohr.beryllium.fields.BeFieldComposer;
+import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
+import com.s8.io.bohr.beryllium.fields.BeFieldParser;
+import com.s8.io.bohr.beryllium.fields.BeFieldProperties;
+import com.s8.io.bohr.beryllium.fields.BeFieldPrototype;
+import com.s8.io.bohr.beryllium.object.BeObject;
 import com.s8.io.bytes.alpha.ByteInflow;
 import com.s8.io.bytes.alpha.ByteOutflow;
 import com.s8.io.bytes.alpha.MemoryFootprint;
 
-
 /**
  * 
- * @author pierreconvert
  *
+ * @author Pierre Convert
+ * Copyright (C) 2022, Pierre Convert. All rights reserved.
+ * 
  */
-public class BooleanBeField extends MappedBeField {
+public class BooleanBeField extends PrimitiveBeField {
 
-	public final static Prototype PROTOTYPE = new MappedBeField.Prototype(boolean.class) {
+	public final static PrimitiveBeField.Prototype PROTOTYPE = new Prototype(boolean.class){
 
 		@Override
-		public BooleanBeField createField(String name, long props, Field field)
-				throws BeTypeBuildException {
-			return new BooleanBeField(name, props, field);
+		public PrimitiveBeField.Builder createFieldBuilder(BeFieldProperties properties, Field handler) {
+			return new BooleanBeField.Builder(properties, handler);
 		}
 	};
 
-	
+
+	private static class Builder extends PrimitiveBeField.Builder {
+
+		public Builder(BeFieldProperties properties, Field handler) {
+			super(properties, handler);
+		}
+
+		@Override
+		public BeFieldPrototype getPrototype() {
+			return PROTOTYPE;
+		}
+
+		@Override
+		public BeField build(int ordinal) throws BeBuildException {
+			return new BooleanBeField(ordinal, properties, field);
+		}
+	}
+
+
+
+	/**
+	 * 
+	 * @param outboundTypeName
+	 * @param handler
+	 * @throws S8BuildException 
+	 */
+	public BooleanBeField(int ordinal, BeFieldProperties properties, Field handler) throws BeBuildException {
+		super(ordinal, properties, handler);
+	}
+
 	@Override
 	public Prototype getPrototype() {
 		return PROTOTYPE;
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param handler
-	 */
-	public BooleanBeField(String name, long props, Field field){
-		super(name, props, field);
+
+	@Override
+	public void computeFootprint(BeObject object, MemoryFootprint weight) {
+		weight.reportBytes(1);
+	}
+
+	@Override
+	public void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException {
+		boolean value = field.getBoolean(origin);
+		field.setBoolean(clone, value);
+	}
+
+	@Override
+	public void DEBUG_print(String indent) {
+		System.out.println(indent + name + ": (boolean)");
 	}
 
 
 	@Override
-	public void readValue(Object object, ByteInflow inflow) throws BeSerialException {
-		try {
-			// read advertised encoding
-			switch(inflow.getUInt8()) {
-			case BerylliumEncoding.TRUE_BOOL8:
-				field.setBoolean(object, true);
-				break;
-				
-			case BerylliumEncoding.FALSE_BOOL8:
-				field.setBoolean(object, false);
-				break;
-			
-			default: throw new BeSerialException("Illegal encoding for boolean value: "+name, null);
-			}
-		} 
-		catch (IOException cause) {
-			cause.printStackTrace();
-			throw new BeSerialException("failed to write (I/O) with: "+name, cause);
-		} 
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			cause.printStackTrace();
-			throw new BeSerialException("failed to write (field access) with: "+name, cause);
-		}
+	public boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException {
+		boolean baseValue = field.getBoolean(base);
+		boolean updateValue = field.getBoolean(update);
+		return baseValue != updateValue;
 	}
 
 
 	@Override
-	public void writeValue(Object object, ByteOutflow outflow) throws BeSerialException {
-		try {
-			outflow.putUInt8(field.getBoolean(object) ? BerylliumEncoding.TRUE_BOOL8 : BerylliumEncoding.FALSE_BOOL8);
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to write (I/O): "+name, cause);
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to write (field access) with: "+name, cause);
-		}
+	public BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException {
+		return new BooleanBeFieldDelta(this, field.getBoolean(object));
 	}
 
 
 	@Override
-	public void computeFootprint(Object object, MemoryFootprint weight) {
-		weight.reportBytes(8);
-	}
-
-
-	@Override
-	public void deepClone(Object origin, Object clone) throws BeSerialException {
-		try {
-			field.setBoolean(clone, field.getBoolean(origin));	
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to deep clone (field access) for field: "+name, cause);
-		}
-	}
-
-
-	@Override
-	public boolean hasDiff(Object base, Object update) throws BeSerialException {
-		try {
-			return field.getBoolean(base) != field.getBoolean(update);
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
-		}
-	}
-
-
-
-	@Override
-	protected void printValue(Object object, Writer writer) throws BeSerialException {
+	protected void printValue(BeObject object, Writer writer) throws BeIOException {
 		try {
 			writer.write(Boolean.toString(field.getBoolean(object)));
-		}
-		catch (IllegalArgumentException | IllegalAccessException cause) {
-			throw new BeSerialException("failed to compute diffs (field access) for field: "+name, cause);
-		} 
-		catch (IOException cause) {
-			throw new BeSerialException("failed to print values (field access) for field: "+name, cause);
+		} catch (IllegalArgumentException | IllegalAccessException | IOException e) {
+			throw new BeIOException(e.getMessage());
 		}
 	}
+
+
+
+
+
+
+
+	/* <IO-inflow-section> */
+
+
+	@Override
+	public BeFieldParser createParser(ByteInflow inflow) throws IOException {
+		int code = inflow.getUInt8();
+		switch(code) {
+
+		case BOHR_Types.BOOL8 : return new Bool8_Inflow();
+
+		default : throw new BeIOException("Failed to find field-inflow for code: "+Integer.toHexString(code));
+		}
+	}
+
+
+
+	private class Bool8_Inflow extends BeFieldParser {
+
+		@Override
+		public BooleanBeField getField() {
+			return BooleanBeField.this;
+		}
+
+		@Override
+		public void parseValue(BeObject object, ByteInflow inflow) 
+				throws IOException, IllegalArgumentException, IllegalAccessException {
+			field.setBoolean(object, inflow.getBool8());
+		}
+
+		@Override
+		public BeFieldDelta deserializeDelta(ByteInflow inflow) throws IOException {
+			return new BooleanBeFieldDelta(BooleanBeField.this, inflow.getBool8());
+		}
+	}
+
+	/* </IO-inflow-section> */
+
+
+	/* <IO-outflow-section> */
+
+
+
+	@Override
+	public BeFieldComposer createComposer(int code) throws BeIOException {
+		switch(flow) {
+		case DEFAULT_FLOW_TAG: case "bool8" : return new Bool8Composer(code);
+		default : throw new BeIOException("Failed to find field-outflow for encoding: "+flow);
+		}	
+	}
+
+
+	private class Bool8Composer extends BeFieldComposer {
+
+		public Bool8Composer(int code) { super(code); }
+
+		@Override
+		public BooleanBeField getField() {
+			return BooleanBeField.this;
+		}
+
+		@Override
+		public void publishFlowEncoding(ByteOutflow outflow) throws IOException {
+			outflow.putUInt8(BOHR_Types.BOOL8);
+		}
+
+		@Override
+		public void composeValue(BeObject object, ByteOutflow outflow) 
+				throws IOException, IllegalArgumentException, IllegalAccessException {
+			outflow.putBool8(field.getBoolean(object));
+		}
+
+		@Override
+		public void publishValue(BeFieldDelta delta, ByteOutflow outflow) throws IOException {
+			outflow.putBool8(((BooleanBeFieldDelta) delta).value);
+		}
+	}
+
+	/* <IO-outflow-section> */	
+
 
 }
