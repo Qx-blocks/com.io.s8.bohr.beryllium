@@ -3,6 +3,7 @@ package com.s8.io.bohr.beryllium.demos;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
 import com.s8.io.bohr.beryllium.tables.BerylTable;
 import com.s8.io.bohr.beryllium.types.BeTypeBuildException;
 

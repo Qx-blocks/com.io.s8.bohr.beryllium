@@ -281,11 +281,11 @@ public class BeTypeBuilder {
 				/*
 				 * retrieve constructor with no parameters 
 				 */
-				constructor = baseType.getConstructor(new Class<?>[]{});
+				constructor = baseType.getConstructor(new Class<?>[]{String.class});
 
 			} 
 			catch (NoSuchMethodException | SecurityException e) {
-				throw new BeBuildException("missing public constructor with parameters", baseType);
+				throw new BeBuildException("missing public constructor with one id parameter", baseType);
 			}
 			catch (ClassCastException e) {
 				throw new BeBuildException("Must inherit DkObject", baseType);

@@ -13,6 +13,8 @@ module com.s8.io.bohr.beryllium {
 	
 	exports com.s8.io.bohr.beryllium.fields;
 	exports com.s8.io.bohr.beryllium.fields.primitives;
+	exports com.s8.io.bohr.beryllium.fields.arrays;
+	exports com.s8.io.bohr.beryllium.fields.objects;
 
 	exports com.s8.io.bohr.beryllium.object;
 	exports com.s8.io.bohr.beryllium.syntax;

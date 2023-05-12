@@ -5,6 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
+import com.s8.io.bohr.beryllium.fields.arrays.BooleanArrayBeField;
+import com.s8.io.bohr.beryllium.fields.arrays.DoubleArrayBeField;
+import com.s8.io.bohr.beryllium.fields.arrays.FloatArrayBeField;
+import com.s8.io.bohr.beryllium.fields.arrays.IntegerArrayBeField;
+import com.s8.io.bohr.beryllium.fields.arrays.LongArrayBeField;
+import com.s8.io.bohr.beryllium.fields.arrays.ShortArrayBeField;
+import com.s8.io.bohr.beryllium.fields.arrays.StringArrayBeField;
+import com.s8.io.bohr.beryllium.fields.objects.EnumBeField;
+import com.s8.io.bohr.beryllium.fields.objects.S8RefBeField;
+import com.s8.io.bohr.beryllium.fields.objects.S8SerializableBeField;
 import com.s8.io.bohr.beryllium.fields.primitives.BooleanBeField;
 import com.s8.io.bohr.beryllium.fields.primitives.DoubleBeField;
 import com.s8.io.bohr.beryllium.fields.primitives.FloatBeField;
@@ -13,20 +23,6 @@ import com.s8.io.bohr.beryllium.fields.primitives.LongBeField;
 import com.s8.io.bohr.beryllium.fields.primitives.PrimitiveBeField;
 import com.s8.io.bohr.beryllium.fields.primitives.ShortBeField;
 import com.s8.io.bohr.beryllium.fields.primitives.StringBeField;
-import com.s8.io.bohr.neodymium.fields.arrays.BooleanArrayNdField;
-import com.s8.io.bohr.neodymium.fields.arrays.DoubleArrayNdField;
-import com.s8.io.bohr.neodymium.fields.arrays.FloatArrayNdField;
-import com.s8.io.bohr.neodymium.fields.arrays.IntegerArrayNdField;
-import com.s8.io.bohr.neodymium.fields.arrays.LongArrayNdField;
-import com.s8.io.bohr.neodymium.fields.arrays.ShortArrayNdField;
-import com.s8.io.bohr.neodymium.fields.arrays.StringArrayNdField;
-import com.s8.io.bohr.neodymium.fields.collections.S8ObjectArrayNdField;
-import com.s8.io.bohr.neodymium.fields.collections.S8ObjectListNdField;
-import com.s8.io.bohr.neodymium.fields.objects.EnumNdField;
-import com.s8.io.bohr.neodymium.fields.objects.InterfaceNdField;
-import com.s8.io.bohr.neodymium.fields.objects.S8ObjectNdField;
-import com.s8.io.bohr.neodymium.fields.objects.S8RefNdField;
-import com.s8.io.bohr.neodymium.fields.objects.S8SerializableNdField;
 
 /**
  * 
@@ -44,45 +40,45 @@ public class BeFieldFactory {
 	public final static PrimitiveBeField.Prototype[] DEFAULT_PRIMITIVES = new PrimitiveBeField.Prototype[] {
 
 					BooleanBeField.PROTOTYPE,
-					BooleanArrayNdField.PROTOTYPE,
+					BooleanArrayBeField.PROTOTYPE,
 
 					ShortBeField.PROTOTYPE,
-					ShortArrayNdField.PROTOTYPE,
+					ShortArrayBeField.PROTOTYPE,
 
 					IntegerBeField.PROTOTYPE,
-					IntegerArrayNdField.PROTOTYPE,
+					IntegerArrayBeField.PROTOTYPE,
 
 					LongBeField.PROTOTYPE,
-					LongArrayNdField.PROTOTYPE,
+					LongArrayBeField.PROTOTYPE,
 
 					FloatBeField.PROTOTYPE,
-					FloatArrayNdField.PROTOTYPE,
+					FloatArrayBeField.PROTOTYPE,
 
 					DoubleBeField.PROTOTYPE,
-					DoubleArrayNdField.PROTOTYPE,
+					DoubleArrayBeField.PROTOTYPE,
 
 					StringBeField.PROTOTYPE,
-					StringArrayNdField.PROTOTYPE
+					StringArrayBeField.PROTOTYPE
 	};
 
 
 	public final static BeFieldPrototype[] STANDARDS = new BeFieldPrototype[] {
 
-			S8SerializableNdField.PROTOTYPE,
+			S8SerializableBeField.PROTOTYPE,
 			
 			/* must be tested before S8ObjectGphField */
-			S8RefNdField.PROTOTYPE,
+			S8RefBeField.PROTOTYPE,
 			//S8TableGphField.PROTOTYPE,
 
 			/* must be tested before S8Struct */
-			S8ObjectNdField.PROTOTYPE,
+			//S8ObjectNdField.PROTOTYPE,
 
-			S8ObjectArrayNdField.PROTOTYPE,
-			S8ObjectListNdField.PROTOTYPE,
-			EnumNdField.PROTOTYPE,
+			//S8ObjectArrayNdField.PROTOTYPE,
+			//S8ObjectListNdField.PROTOTYPE,
+			EnumBeField.PROTOTYPE,
 
 			// wildcard
-			InterfaceNdField.PROTOTYPE
+			//InterfaceNdField.PROTOTYPE
 	};
 
 

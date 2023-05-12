@@ -7,6 +7,7 @@ import com.s8.io.bohr.atom.S8BuildException;
 import com.s8.io.bohr.atom.S8Exception;
 import com.s8.io.bohr.beryllium.codebase.BeCodebase;
 import com.s8.io.bohr.beryllium.codebase.BeCodebaseBuilder;
+import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
 import com.s8.io.bohr.beryllium.tables.BerylTable;
 import com.s8.io.bohr.beryllium.types.BeType;
 import com.s8.io.bohr.beryllium.types.BeTypeBuildException;

@@ -136,9 +136,9 @@ public class BeType {
 	 * @return
 	 * @throws LthSerialException
 	 */
-	public BeObject createNewInstance() throws BeIOException {
+	public BeObject createNewInstance(String id) throws BeIOException {
 		try {
-			return (BeObject) constructor.newInstance(new Object[]{});
+			return (BeObject) constructor.newInstance(new Object[]{id});
 		}
 		catch (InstantiationException 
 				| IllegalAccessException 
@@ -177,7 +177,7 @@ public class BeType {
 	 */
 	public BeObject deepClone(BeObject origin) throws BeIOException {
 		try {
-			BeObject clone = createNewInstance();
+			BeObject clone = createNewInstance(origin.S8_id);
 			for(BeField field : fields) {
 
 				field.deepClone(origin, clone);

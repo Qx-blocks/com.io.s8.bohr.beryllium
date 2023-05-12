@@ -1,4 +1,4 @@
-package com.s8.io.bohr.beryllium.demos;
+package com.s8.io.bohr.beryllium.demos.examples;
 
 import com.s8.io.bohr.atom.annotations.S8Field;
 import com.s8.io.bohr.atom.annotations.S8ObjectType;

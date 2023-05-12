@@ -113,6 +113,7 @@ public abstract class BeField {
 	 * @param bindings
 	 * @throws IllegalAccessException 
 	 * @throws IllegalArgumentException 
+	 * @throws  
 	 * @throws LthSerialException
 	 */
 	public abstract void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException;

@@ -3,6 +3,8 @@ package com.s8.io.bohr.beryllium.demos;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
+
 public class PerformanceTest02 {
 
 	public static void main(String[] args) {
