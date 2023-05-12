@@ -1,5 +1,7 @@
 package com.s8.io.bohr.beryllium.demos;
 
+import java.util.Set;
+
 import com.s8.io.bohr.beryllium.branch.BeBranch;
 import com.s8.io.bohr.beryllium.codebase.BeCodebase;
 import com.s8.io.bohr.beryllium.demos.examples.MyExtendedStorageEntry;
@@ -7,7 +9,7 @@ import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 
-public class PerformanceTest02 {
+public class PerformanceTest3 {
 
 	public static void main(String[] args) throws BeIOException, BeBuildException {
 
@@ -30,12 +32,19 @@ public class PerformanceTest02 {
 		}
 		
 		
+		Set<String> keys = branch.getKeySet();
+		
+		
 		class Wrapper { public double x = 0; }
 		
 		Wrapper wrapper = new Wrapper();
 		long t = System.nanoTime();
-		branch.forEach(e -> {
-			wrapper.x += ((MyStorageEntry) e).lattitude;
+		keys.forEach(k -> {
+			try {
+				wrapper.x += ((MyStorageEntry) branch.get(k)).lattitude;
+			} catch (BeIOException e) {
+				e.printStackTrace();
+			}
 		});
 		long dt = System.nanoTime() - t;
 		

@@ -10,8 +10,8 @@ import com.s8.io.bohr.beryllium.object.BeObject;
  * @author pierreconvert
  *
  */
-@S8ObjectType(name = "storage-entry")
-public final class MyStorageEntry extends BeObject {
+@S8ObjectType(name = "storage-entry", sub = { MyExtendedStorageEntry.class })
+public class MyStorageEntry extends BeObject {
 
 	
 	public enum Category {
@@ -80,18 +80,5 @@ public final class MyStorageEntry extends BeObject {
 		timestamp = System.currentTimeMillis();
 	}
 
-
-	@Override
-	public MyStorageEntry deepCopy() {
-		MyStorageEntry copy = new MyStorageEntry(S8_id);
-		copy.category = category;
-		copy.quantity = quantity;
-		copy.isStored = isStored;
-		copy.size = size;
-		copy.lattitude = lattitude;
-		copy.longitude = longitude;
-		copy.timestamp = timestamp;
-		return copy;
-	}
 
 }

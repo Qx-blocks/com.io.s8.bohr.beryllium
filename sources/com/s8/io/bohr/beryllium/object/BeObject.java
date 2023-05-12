@@ -7,15 +7,14 @@ package com.s8.io.bohr.beryllium.object;
  */
 public abstract class BeObject {
 
-	public final String S8_id;
+	public final String S8_key;
 	
 	
 	public BeObject(String id) {
 		super();
-		this.S8_id = id;
+		this.S8_key = id;
 	}
 
 
-	public abstract BeObject deepCopy();
 	
 }

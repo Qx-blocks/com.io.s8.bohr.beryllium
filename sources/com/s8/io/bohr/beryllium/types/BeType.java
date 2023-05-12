@@ -177,7 +177,7 @@ public class BeType {
 	 */
 	public BeObject deepClone(BeObject origin) throws BeIOException {
 		try {
-			BeObject clone = createNewInstance(origin.S8_id);
+			BeObject clone = createNewInstance(origin.S8_key);
 			for(BeField field : fields) {
 
 				field.deepClone(origin, clone);
