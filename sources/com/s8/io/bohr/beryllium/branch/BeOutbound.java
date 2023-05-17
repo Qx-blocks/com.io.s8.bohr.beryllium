@@ -2,6 +2,7 @@ package com.s8.io.bohr.beryllium.branch;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.s8.io.bohr.atom.BOHR_Keywords;
@@ -82,7 +83,7 @@ public class BeOutbound {
 	 * @param deltas
 	 * @throws IOException
 	 */
-	private void composeSequence(ByteOutflow outflow, BeBranchDelta[] deltas) throws IOException {
+	private void composeSequence(ByteOutflow outflow, List<BeBranchDelta> deltas) throws IOException {
 		outflow.putUInt8(BOHR_Keywords.OPEN_SEQUENCE);
 		for(BeBranchDelta delta : deltas){
 			delta.serialize(this, outflow);
@@ -97,7 +98,7 @@ public class BeOutbound {
 	 * @param outflow
 	 * @throws IOException
 	 */
-	public void pushFrame(ByteOutflow outflow, BeBranchDelta[] deltas) throws IOException {
+	public void pushFrame(ByteOutflow outflow, List<BeBranchDelta> deltas) throws IOException {
 		outflow.putByteArray(BOHR_Keywords.FRAME_HEADER);
 		composeSequence(outflow, deltas);
 		outflow.putByteArray(BOHR_Keywords.FRAME_FOOTER);

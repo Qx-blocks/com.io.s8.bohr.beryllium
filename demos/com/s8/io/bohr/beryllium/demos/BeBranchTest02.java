@@ -36,7 +36,7 @@ public class BeBranchTest02 {
 			
 		}
 		
-		BeBranchDelta delta = branch.pullDelta();
+		List<BeBranchDelta> delta = branch.pullDeltas();
 		
 		
 

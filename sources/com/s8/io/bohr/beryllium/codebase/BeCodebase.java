@@ -105,7 +105,7 @@ public class BeCodebase {
 	 * 
 	 * @param typesContext
 	 */
-	public BeCodebase(boolean isVerbose) {
+	BeCodebase(boolean isVerbose) {
 		super();
 		
 		this.isVerbose = isVerbose;

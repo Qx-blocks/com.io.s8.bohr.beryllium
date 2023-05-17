@@ -48,6 +48,7 @@ public class BeBranch {
 		this.codebase = codebase;
 	}
 
+	
 
 	/**
 	 * 
@@ -56,6 +57,10 @@ public class BeBranch {
 	 */
 	public void pushDelta(BeBranchDelta delta) throws BeIOException {
 		delta.consume(table);
+	}
+	
+	public void pushDelta(List<BeBranchDelta> deltas) throws BeIOException {
+		for(BeBranchDelta delta : deltas) { delta.consume(table); }
 	}
 
 
@@ -155,10 +160,13 @@ public class BeBranch {
 	 * 
 	 * @return
 	 */
-	public BeBranchDelta pullDelta() {
-		BeBranchDelta delta  = branchDelta;
+	public List<BeBranchDelta> pullDeltas() {
+		
+		List<BeBranchDelta> sequence = new ArrayList<>();
+		sequence.add(branchDelta);
 		branchDelta = null;
-		return delta;
+		
+		return sequence;
 	}
 	
 	

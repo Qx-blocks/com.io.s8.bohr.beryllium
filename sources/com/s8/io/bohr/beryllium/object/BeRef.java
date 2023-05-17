@@ -14,19 +14,19 @@ import com.s8.io.bytes.alpha.ByteOutflow;
  *
  * @param <T>
  */
-public final class BeRef<T extends BeObject> {
+public final class BeRef {
 	
 	
 	/**
 	 * 
 	 */
-	public final String address;
+	public final String repositoryAddress;
 	
 	
 	/**
 	 * 
 	 */
-	public final String branch;
+	public final String branchId;
 	
 	
 	/**
@@ -45,8 +45,8 @@ public final class BeRef<T extends BeObject> {
 	
 	public BeRef(String address, String branch, long version, int port) {
 		super();
-		this.address = address;
-		this.branch = branch;
+		this.repositoryAddress = address;
+		this.branchId = branch;
 		this.version = version;
 		this.port = port;
 	}
@@ -57,7 +57,7 @@ public final class BeRef<T extends BeObject> {
 	 * @param right
 	 * @return
 	 */
-	public static boolean areEqual(BeRef<?> left, BeRef<?> right) {
+	public static boolean areEqual(BeRef left, BeRef right) {
 		if(left==null && right==null) {
 			return true;
 		}
@@ -65,8 +65,8 @@ public final class BeRef<T extends BeObject> {
 			return false;
 		}
 		else {
-			return left.address.equals(right.address) 
-					&& (left.branch == right.branch)
+			return left.repositoryAddress.equals(right.repositoryAddress) 
+					&& (left.branchId == right.branchId)
 					&& (left.version == right.version)
 					&& (left.port == right.port);
 		}
@@ -75,13 +75,13 @@ public final class BeRef<T extends BeObject> {
 	
 
 	
-	public static <T extends BeObject> BeRef<T> read(ByteInflow inflow) throws IOException {
+	public static BeRef read(ByteInflow inflow) throws IOException {
 		String address = inflow.getStringUTF8();
 		if(address != null) {
 			String branch = inflow.getStringUTF8();
 			long version = inflow.getUInt7x();
 			int port = inflow.getUInt8();
-			return new BeRef<T>(address, branch, version, port);
+			return new BeRef(address, branch, version, port);
 		}
 		else {
 			return null;
@@ -91,12 +91,12 @@ public final class BeRef<T extends BeObject> {
 	
 
 	
-	public static void write(BeRef<?> ref, ByteOutflow outflow) throws IOException {
+	public static void write(BeRef ref, ByteOutflow outflow) throws IOException {
 		if(ref != null) {
-			outflow.putStringUTF8(ref.address);
+			outflow.putStringUTF8(ref.repositoryAddress);
 			
 			// branch
-			outflow.putStringUTF8(ref.branch);
+			outflow.putStringUTF8(ref.branchId);
 			
 			// version
 			outflow.putUInt7x(ref.version);

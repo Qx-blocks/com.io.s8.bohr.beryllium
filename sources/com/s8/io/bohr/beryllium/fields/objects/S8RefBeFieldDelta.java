@@ -19,17 +19,17 @@ public class S8RefBeFieldDelta extends BeFieldDelta {
 
 	public final S8RefBeField field;
 
-	public final BeRef<?> ref;
+	public final BeRef ref;
 
 
 	/**
 	 * 
 	 * @param fieldCode
 	 * @param field
-	 * @param address
+	 * @param repositoryAddress
 	 * @param slot
 	 */
-	public S8RefBeFieldDelta(S8RefBeField field, BeRef<?> ref) {
+	public S8RefBeFieldDelta(S8RefBeField field, BeRef ref) {
 		super();
 		this.field = field;
 		this.ref = ref;
@@ -50,7 +50,7 @@ public class S8RefBeFieldDelta extends BeFieldDelta {
 
 	@Override
 	public void computeFootprint(MemoryFootprint weight) {
-		weight.reportBytes(1 + ref.address.length() + 8);
+		weight.reportBytes(1 + ref.repositoryAddress.length() + 8);
 	}
 
 }

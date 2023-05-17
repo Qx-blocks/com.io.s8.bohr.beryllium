@@ -3,8 +3,6 @@ package com.s8.io.bohr.beryllium.fields.objects;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import com.s8.io.bohr.atom.BOHR_Types;
 import com.s8.io.bohr.atom.annotations.S8Field;
@@ -44,11 +42,8 @@ public class S8RefBeField extends BeField {
 				S8Field annotation = field.getAnnotation(S8Field.class);
 				if(annotation != null) {
 
-					Type parameterType = field.getGenericType();
-					ParameterizedType parameterizedType = (ParameterizedType) parameterType; 
-					Class<?> typeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-
-					BeFieldProperties properties = new BeFieldProperties(this, typeArgument, BeFieldProperties.FIELD);
+					
+					BeFieldProperties properties = new BeFieldProperties(this, null, BeFieldProperties.FIELD);
 					properties.setFieldAnnotation(annotation);
 					return properties;	
 				}
@@ -102,28 +97,28 @@ public class S8RefBeField extends BeField {
 	@Override
 	public void computeFootprint(BeObject object, MemoryFootprint weight) 
 			throws IllegalArgumentException, IllegalAccessException {
-		BeRef<?> value = (BeRef<?>) field.get(object);
-		weight.reportBytes(1 + value.address.length() + 8);
+		BeRef value = (BeRef) field.get(object);
+		weight.reportBytes(1 + value.repositoryAddress.length() + 8);
 	}
 
 
 	@Override
 	public void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException {
-		field.set(clone, (BeRef<?>) field.get(origin));
+		field.set(clone, (BeRef) field.get(origin));
 	}
 
 
 	@Override
 	public boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException {
-		BeRef<?> baseValue = (BeRef<?>) field.get(base);
-		BeRef<?> updateValue = (BeRef<?>) field.get(update);
+		BeRef baseValue = (BeRef) field.get(base);
+		BeRef updateValue = (BeRef) field.get(update);
 		return !BeRef.areEqual(baseValue, updateValue);
 	}
 
 
 	@Override
 	public BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException {
-		return new S8RefBeFieldDelta(this, (BeRef<?>) field.get(object));
+		return new S8RefBeFieldDelta(this, (BeRef) field.get(object));
 	}
 
 
@@ -139,7 +134,7 @@ public class S8RefBeField extends BeField {
 	@Override
 	protected void printValue(BeObject object, Writer writer) 
 			throws IOException, IllegalArgumentException, IllegalAccessException {
-		BeRef<?> value = (BeRef<?>) field.get(object);
+		BeRef value = (BeRef) field.get(object);
 		if(value!=null) {
 			writer.write(value.toString());
 		}
@@ -166,13 +161,13 @@ public class S8RefBeField extends BeField {
 	public BeFieldParser createParser(ByteInflow inflow) throws IOException {
 		int code;
 		switch((code = inflow.getUInt8())){
-		case BOHR_Types.S8REF : return new Inflow();
+		case BOHR_Types.S8REF : return new DefaultParser();
 		default: throw new BeIOException("Unsupported code: "+Integer.toHexString(code));
 		}
 	}
 
 
-	private class Inflow extends BeFieldParser {
+	private class DefaultParser extends BeFieldParser {
 
 		@Override
 		public void parseValue(BeObject object, ByteInflow inflow) 
@@ -192,15 +187,8 @@ public class S8RefBeField extends BeField {
 		}
 
 
-		private BeRef<?> deserialize(ByteInflow inflow) throws IOException {
-			int length = (int) inflow.getUInt7x();
-			if(length > 0) {
-				//byte[] bytes = inflow.getByteArray(length);
-				return null;
-			}
-			else {
-				return null;
-			}
+		private BeRef deserialize(ByteInflow inflow) throws IOException {
+			return BeRef.read(inflow);
 		}
 	}
 
@@ -214,16 +202,15 @@ public class S8RefBeField extends BeField {
 	public BeFieldComposer createComposer(int code) throws BeIOException {
 		switch(flow) {
 
-		case "obj[]" : return new Outflow(code);
+		case "obj[]" : default: return new DefaultComposer(code);
 
-		default : throw new BeIOException("Impossible to match IO type for flow: "+flow);
 		}
 	}
 
 
-	private class Outflow extends BeFieldComposer {
+	private class DefaultComposer extends BeFieldComposer {
 
-		public Outflow(int code) {
+		public DefaultComposer(int code) {
 			super(code);
 		}
 
@@ -240,13 +227,13 @@ public class S8RefBeField extends BeField {
 		@Override
 		public void composeValue(BeObject object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
-			BeRef<?> value = (BeRef<?>) field.get(object);
+			BeRef value = (BeRef) field.get(object);
 			BeRef.write(value, outflow);
 		}
 
 		@Override
 		public void publishValue(BeFieldDelta delta, ByteOutflow outflow) throws IOException {
-			BeRef<?> value = ((S8RefBeFieldDelta) delta).ref;
+			BeRef value = ((S8RefBeFieldDelta) delta).ref;
 			BeRef.write(value, outflow);
 		}
 	}
