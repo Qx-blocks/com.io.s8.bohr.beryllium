@@ -48,7 +48,7 @@ public class BeBranch {
 		this.codebase = codebase;
 	}
 
-	
+
 
 	/**
 	 * 
@@ -58,7 +58,7 @@ public class BeBranch {
 	public void pushDelta(BeBranchDelta delta) throws BeIOException {
 		delta.consume(table);
 	}
-	
+
 	public void pushDelta(List<BeBranchDelta> deltas) throws BeIOException {
 		for(BeBranchDelta delta : deltas) { delta.consume(table); }
 	}
@@ -94,16 +94,16 @@ public class BeBranch {
 			/* UPDATE object */
 			else {
 				publishUpdate(id, type, previous, object);
-				
-				
+
+
 			}
 		}
 		else { /* only CREATE */
 			publishCreate(id, type, object);
 		}
-		
+
 		BeObject objectClone = type.deepClone(object);
-		
+
 		table.objects.put(id, objectClone);
 	}
 
@@ -154,23 +154,23 @@ public class BeBranch {
 	private void publishRemove(String id) {
 		branchDelta.objectDeltas.add(new RemoveBeObjectDelta(id));
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @return
 	 */
 	public List<BeBranchDelta> pullDeltas() {
-		
+
 		List<BeBranchDelta> sequence = new ArrayList<>();
 		sequence.add(branchDelta);
 		branchDelta = null;
-		
+
 		return sequence;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 
 	 * @param id
@@ -179,30 +179,58 @@ public class BeBranch {
 	 */
 	public BeObject get(String id) throws BeIOException {
 		BeObject origin = table.objects.get(id);
-		
-		
+
+
 		if(origin != null) {
 			BeType type = codebase.getType(origin);
-			
+
 			BeObject object = type.deepClone(origin);
-			
+
 			return object;
 		}
 		else {
 			return null;
 		}
 	}
-	
-	
+
+
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws BeIOException
+	 */
+	public void put(String id, BeObject object) throws BeIOException {
+		if(object != null) {
+			BeType type = codebase.getType(object);
+			BeObject clone = type.deepClone(object);
+			table.objects.put(id, clone);	
+		}
+	}
+
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws BeIOException
+	 */
+	public void remove(String id) throws BeIOException {
+		table.objects.remove(id);
+	}
+
+
+
 	/**
 	 * 
 	 * @param consumer
 	 */
 	public void forEach(Consumer<BeObject> consumer) {
 		table.objects.forEach((key, object) -> {
-		
+
 			BeType type = codebase.getType(object);
-			
+
 			try {
 				consumer.accept(type.deepClone(object));
 			} 
@@ -211,8 +239,8 @@ public class BeBranch {
 			}
 		});
 	}
-	
-	
+
+
 	public Set<String> getKeySet(){
 		return table.objects.keySet();
 	}
