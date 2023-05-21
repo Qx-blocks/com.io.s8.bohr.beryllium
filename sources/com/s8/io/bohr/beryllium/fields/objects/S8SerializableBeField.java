@@ -84,7 +84,7 @@ public class S8SerializableBeField extends BeField {
 
 
 
-	private BohrSerializable.S8SerialPrototype<?> deserializer;
+	private BohrSerializable.BohrSerialPrototype<?> deserializer;
 
 
 
@@ -183,12 +183,7 @@ public class S8SerializableBeField extends BeField {
 	public BeFieldParser createParser(ByteInflow inflow) throws IOException {
 		int code = inflow.getUInt8();
 		if(code != BOHR_Types.SERIAL) {
-			throw new IOException("only array accepted");
-		}
-
-		String signature = deserializer.signature;
-		if(signature != deserializer.signature) {
-			throw new BeIOException("Unsupported SERIAL: "+printType());
+			throw new IOException("only SERIAL accepted");
 		}
 
 		// in fine, create parser
@@ -256,7 +251,6 @@ public class S8SerializableBeField extends BeField {
 		@Override
 		public void publishFlowEncoding(ByteOutflow outflow) throws IOException {
 			outflow.putUInt8(BOHR_Types.SERIAL);
-			outflow.putStringUTF8(deserializer.signature);
 		}
 
 		@Override
