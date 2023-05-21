@@ -60,7 +60,7 @@ public abstract class BeField {
 		
 		/* <field-properties> */
 		this.name = properties.getName();
-		this.flow = properties.getFlow();
+		this.flow = properties.getExportFormat();
 		this.mask = properties.getMask();
 		this.flags = properties.getFlags();
 		/* </field-properties> */

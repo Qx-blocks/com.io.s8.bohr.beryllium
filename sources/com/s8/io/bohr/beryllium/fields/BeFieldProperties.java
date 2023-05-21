@@ -38,12 +38,12 @@ public class BeFieldProperties {
 
 
 
-	private boolean isFlowDefined = false;
+	private boolean isExportFormatDefined = false;
 
 	/**
 	 * 
 	 */
-	private String flow;
+	private String exportFormat;
 
 
 	private boolean isMaskDefined = false;
@@ -113,14 +113,14 @@ public class BeFieldProperties {
 
 
 
-	public String getFlow() {
-		return flow;
+	public String getExportFormat() {
+		return exportFormat;
 	}
 
 
-	public void setFlow(String flow) {
-		this.flow = flow;
-		this.isFlowDefined = true;
+	public void setexportFormat(String format) {
+		this.exportFormat = format;
+		this.isExportFormatDefined = true;
 	}
 
 
@@ -174,11 +174,11 @@ public class BeFieldProperties {
 		}
 
 		// flow
-		if(!isFlowDefined && right.isFlowDefined) {
-			setFlow(right.name);
+		if(!isExportFormatDefined && right.isExportFormatDefined) {
+			setexportFormat(right.name);
 		}
-		else if(isFlowDefined && right.isFlowDefined && !flow.equals(right.flow)) {
-			throw new BeBuildException("<flow> discrepancy: "+flow+" <-> "+right.flow);
+		else if(isExportFormatDefined && right.isExportFormatDefined && !exportFormat.equals(right.exportFormat)) {
+			throw new BeBuildException("<flow> discrepancy: "+exportFormat+" <-> "+right.exportFormat);
 		}
 
 		// mask
@@ -210,9 +210,7 @@ public class BeFieldProperties {
 	 */
 	public void setFieldAnnotation(S8Field annotation) {
 		setName(annotation.name());
-		setFlow(annotation.flow());
-		setMask(annotation.mask());
-		setFlags(annotation.props());
+		setexportFormat(annotation.export());
 	}
 
 
@@ -224,9 +222,7 @@ public class BeFieldProperties {
 	 */
 	public void setGetterAnnotation(S8Getter annotation) {
 		setName(annotation.name());
-		setFlow(annotation.flow());
-		setMask(annotation.mask());
-		setFlags(annotation.flags());
+		setexportFormat(annotation.export());
 	}
 
 	/**
