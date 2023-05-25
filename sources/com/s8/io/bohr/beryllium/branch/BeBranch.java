@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.s8.arch.fluor.S8Filter;
 import com.s8.io.bohr.beryllium.codebase.BeCodebase;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeField;
@@ -202,12 +203,45 @@ public class BeBranch {
 	 * @throws BeIOException
 	 */
 	public void put(String id, BeObject object) throws BeIOException {
-		if(object != null) {
-			BeType type = codebase.getType(object);
-			BeObject clone = type.deepClone(object);
-			table.objects.put(id, clone);	
+		if(object == null) {
+			throw new BeIOException("NULL : Null objects are not allowed in beryllium paradigm");
 		}
+		
+		BeType type = codebase.getType(object);
+		BeObject clone = type.deepClone(object);
+		table.objects.put(id, clone);	
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public <T> List<T> select(S8Filter<T> filter) throws BeIOException{
+		if(filter == null) { throw new BeIOException("NULL : Filter must be defined"); }
+		
+		List<T> selection = new ArrayList<T>();
+		table.objects.forEach((key, value) -> {
+			
+			if(filter.isSelected((T) value)) {
+				try {
+					// type
+					BeType type = codebase.getType(value);
+
+					// object
+					BeObject object = type.deepClone(value);
+					
+					// item
+					selection.add((T) object);
+					
+				} 
+				catch (BeIOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		/* selection */
+		return selection;
+	}
+	
 
 
 	/**
