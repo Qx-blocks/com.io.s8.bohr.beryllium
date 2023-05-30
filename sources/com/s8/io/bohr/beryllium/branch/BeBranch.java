@@ -170,7 +170,23 @@ public class BeBranch {
 		return sequence;
 	}
 
+	
+	
+	
 
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws BeIOException
+	 */
+	public boolean hasEntry(String id) throws BeIOException {
+		return table.objects.get(id) != null;
+	}
+
+	
+	
 
 	/**
 	 * 
