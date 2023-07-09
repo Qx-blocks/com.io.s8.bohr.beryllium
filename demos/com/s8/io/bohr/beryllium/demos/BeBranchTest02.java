@@ -17,6 +17,13 @@ import com.s8.io.bohr.beryllium.utilities.BeUtilities;
 
 public class BeBranchTest02 {
 
+	
+	/**
+	 * 
+	 * @param args
+	 * @throws BeBuildException
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws BeBuildException, IOException {
 		
 		BeCodebase codebase = BeCodebase.from(MyStorageEntry.class);
@@ -50,13 +57,9 @@ public class BeBranchTest02 {
 			}
 		});
 		
-		
-		
 		Writer writer = new PrintWriter(System.out);
 		BeUtilities.deepCompare(branch, branchCopy, writer);
 		writer.close();
-		
-		
 		
 		System.out.println("hello");
 		
