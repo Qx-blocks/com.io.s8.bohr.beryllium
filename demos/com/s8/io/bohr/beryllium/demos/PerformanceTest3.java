@@ -28,7 +28,7 @@ public class PerformanceTest3 {
 			else {
 				entry = MyExtendedStorageEntry.generateRandom();	
 			}
-			branch.set(entry);
+			branch.put(entry);
 		}
 		
 		

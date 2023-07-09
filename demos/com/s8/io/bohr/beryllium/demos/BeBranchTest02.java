@@ -12,6 +12,7 @@ import com.s8.io.bohr.beryllium.codebase.BeCodebase;
 import com.s8.io.bohr.beryllium.demos.examples.MyExtendedStorageEntry;
 import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
+import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.utilities.BeUtilities;
 
 public class BeBranchTest02 {
@@ -28,20 +29,26 @@ public class BeBranchTest02 {
 		
 		MyStorageEntry entry;
 		for(int i = 0; i<n; i++) {
-			branch.set(entry = MyStorageEntry.generateRandom());
+			branch.put(entry = MyStorageEntry.generateRandom());
 			identifiers.add(entry.S8_key);
 			
-			branch.set(entry = MyExtendedStorageEntry.generateRandom());
+			branch.put(entry = MyExtendedStorageEntry.generateRandom());
 			identifiers.add(entry.S8_key);
 			
 		}
 		
-		List<BeBranchDelta> delta = branch.pullDeltas();
+		List<BeBranchDelta> deltas = branch.pullDeltas();
 		
 		
 
 		BeBranch branchCopy = new BeBranch(codebase);
-		branchCopy.pushDelta(delta);
+		deltas.forEach(delta -> {
+			try {
+				branchCopy.pushDelta(delta);
+			} catch (BeIOException e) {
+				e.printStackTrace();
+			}
+		});
 		
 		
 		

@@ -36,8 +36,10 @@ public class BeBranch {
 
 	private long version;
 
-	private BeBranchDelta branchDelta = null;
+	private BeBranchDelta headDelta = null;
 
+	
+	private final List<BeBranchDelta> deltas = new ArrayList<>();
 
 
 	/**
@@ -57,27 +59,44 @@ public class BeBranch {
 	 * @throws BeIOException
 	 */
 	public void pushDelta(BeBranchDelta delta) throws BeIOException {
+		deltas.add(delta);
 		delta.consume(table);
 	}
 
-	public void pushDelta(List<BeBranchDelta> deltas) throws BeIOException {
-		for(BeBranchDelta delta : deltas) { delta.consume(table); }
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	public List<BeBranchDelta> pullDeltas() {
+		headDelta = null;
+		return deltas;
 	}
+	
 
-
+	/**
+	 * 
+	 * @return
+	 */
+	private BeBranchDelta getHeadDelta() {
+		if(headDelta == null) { 
+			headDelta = new BeBranchDelta(version); 
+			deltas.add(headDelta);
+		}
+		return headDelta;
+	}
+	
+	
+	
 	/**
 	 * 
 	 * @param object
 	 * @throws BeIOException
 	 */
-	public void set(BeObject object) throws BeIOException {
-		if(branchDelta == null) {
-			branchDelta = new BeBranchDelta(version);
-		}
-
-
+	public void put(BeObject object) throws BeIOException {
+		
 		String id = object.S8_key;
-
 
 		BeType type = codebase.getType(object);
 
@@ -95,8 +114,6 @@ public class BeBranch {
 			/* UPDATE object */
 			else {
 				publishUpdate(id, type, previous, object);
-
-
 			}
 		}
 		else { /* only CREATE */
@@ -120,7 +137,7 @@ public class BeBranch {
 				throw new BeIOException(e.getMessage());
 			}
 		}
-		branchDelta.objectDeltas.add(new CreateBeObjectDelta(id, type, fieldDeltas));
+		getHeadDelta().objectDeltas.add(new CreateBeObjectDelta(id, type, fieldDeltas));
 	}
 
 
@@ -147,32 +164,14 @@ public class BeBranch {
 			}
 		}
 
-		if(hasDelta) {
-			branchDelta.objectDeltas.add(new UpdateBeObjectDelta(id, type, fieldDeltas));
-		}
+		getHeadDelta().objectDeltas.add(new UpdateBeObjectDelta(id, type, fieldDeltas));
 	}
 
 	private void publishRemove(String id) {
-		branchDelta.objectDeltas.add(new RemoveBeObjectDelta(id));
+		getHeadDelta().objectDeltas.add(new RemoveBeObjectDelta(id));
 	}
 
 
-	/**
-	 * 
-	 * @return
-	 */
-	public List<BeBranchDelta> pullDeltas() {
-
-		List<BeBranchDelta> sequence = new ArrayList<>();
-		sequence.add(branchDelta);
-		branchDelta = null;
-
-		return sequence;
-	}
-
-	
-	
-	
 
 
 	/**
@@ -211,23 +210,6 @@ public class BeBranch {
 	}
 
 
-
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 * @throws BeIOException
-	 */
-	public void put(String id, BeObject object) throws BeIOException {
-		if(object == null) {
-			throw new BeIOException("NULL : Null objects are not allowed in beryllium paradigm");
-		}
-		
-		BeType type = codebase.getType(object);
-		BeObject clone = type.deepClone(object);
-		table.objects.put(id, clone);	
-	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public <T> List<T> select(S8Filter<T> filter) throws BeIOException{
@@ -268,6 +250,7 @@ public class BeBranch {
 	 */
 	public void remove(String id) throws BeIOException {
 		table.objects.remove(id);
+		publishRemove(id);
 	}
 
 
