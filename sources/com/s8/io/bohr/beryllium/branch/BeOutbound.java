@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.s8.io.bohr.atom.BOHR_Keywords;
+import com.s8.api.bohr.BOHR_Keywords;
+import com.s8.api.bytes.ByteOutflow;
 import com.s8.io.bohr.beryllium.codebase.BeCodebase;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.types.BeType;
 import com.s8.io.bohr.beryllium.types.BeTypeComposer;
-import com.s8.io.bytes.alpha.ByteOutflow;
 
 /**
  * 

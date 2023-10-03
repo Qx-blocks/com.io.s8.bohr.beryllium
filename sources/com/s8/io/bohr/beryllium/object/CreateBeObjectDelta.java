@@ -3,15 +3,16 @@ package com.s8.io.bohr.beryllium.object;
 import java.io.IOException;
 import java.util.List;
 
-import com.s8.io.bohr.atom.BOHR_Keywords;
+import com.s8.api.bohr.BOHR_Keywords;
+import com.s8.api.bytes.ByteOutflow;
+import com.s8.api.bytes.MemoryFootprint;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.branch.BeOutbound;
 import com.s8.io.bohr.beryllium.branch.BeTable;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
 import com.s8.io.bohr.beryllium.types.BeType;
 import com.s8.io.bohr.beryllium.types.BeTypeComposer;
-import com.s8.io.bytes.alpha.ByteOutflow;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**
@@ -65,7 +66,7 @@ public class CreateBeObjectDelta extends BeObjectDelta {
 	public void consume(BeTable table) throws BeIOException {
 
 		/* create object and assign object id */
-		BeObject object = type.createNewInstance(id);
+		TableS8Object object = type.createNewInstance(id);
 
 		/* consume diff */
 		type.consumeDiff(object, deltas);

@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
-import com.s8.io.bohr.atom.BOHR_Types;
+import com.s8.api.bohr.BOHR_Types;
+import com.s8.api.bytes.ByteInflow;
+import com.s8.api.bytes.ByteOutflow;
+import com.s8.api.bytes.MemoryFootprint;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeField;
@@ -13,10 +17,6 @@ import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
 import com.s8.io.bohr.beryllium.fields.BeFieldParser;
 import com.s8.io.bohr.beryllium.fields.BeFieldProperties;
 import com.s8.io.bohr.beryllium.fields.BeFieldPrototype;
-import com.s8.io.bohr.beryllium.object.BeObject;
-import com.s8.io.bytes.alpha.ByteInflow;
-import com.s8.io.bytes.alpha.ByteOutflow;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**
@@ -74,26 +74,26 @@ public class LongBeField extends PrimitiveBeField {
 
 	
 	@Override
-	public void computeFootprint(BeObject object, MemoryFootprint weight) {
+	public void computeFootprint(TableS8Object object, MemoryFootprint weight) {
 		weight.reportBytes(8);
 	}
 
 
 	@Override
-	public void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException {
+	public void deepClone(TableS8Object origin, TableS8Object clone) throws IllegalArgumentException, IllegalAccessException {
 		long value = field.getLong(origin);
 		field.setLong(clone, value);
 	}
 
 	@Override
-	public boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException  {
+	public boolean hasDiff(TableS8Object base, TableS8Object update) throws IllegalArgumentException, IllegalAccessException  {
 		long baseValue = field.getLong(base);
 		long updateValue = field.getLong(update);
 		return baseValue != updateValue;
 	}
 
 	@Override
-	public BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException {
+	public BeFieldDelta produceDiff(TableS8Object object) throws IllegalArgumentException, IllegalAccessException {
 		return new LongBeFieldDelta(this, field.getLong(object));
 	}
 
@@ -106,7 +106,7 @@ public class LongBeField extends PrimitiveBeField {
 
 
 	@Override
-	protected void printValue(BeObject object, Writer writer) 
+	protected void printValue(TableS8Object object, Writer writer) 
 			throws IOException, IllegalArgumentException, IllegalAccessException {
 		writer.write(Long.toString(field.getLong(object)));
 	}
@@ -146,7 +146,7 @@ public class LongBeField extends PrimitiveBeField {
 		}
 
 		@Override
-		public void parseValue(BeObject object, ByteInflow inflow) 
+		public void parseValue(TableS8Object object, ByteInflow inflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			field.setLong(object, deserialize(inflow));
 		}
@@ -241,7 +241,7 @@ public class LongBeField extends PrimitiveBeField {
 
 
 		@Override
-		public void composeValue(BeObject object, ByteOutflow outflow) 
+		public void composeValue(TableS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			serialize(outflow, field.getLong(object));
 		}

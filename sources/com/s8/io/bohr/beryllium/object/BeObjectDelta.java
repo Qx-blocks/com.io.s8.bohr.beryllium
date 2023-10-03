@@ -2,11 +2,11 @@ package com.s8.io.bohr.beryllium.object;
 
 import java.io.IOException;
 
+import com.s8.api.bytes.ByteOutflow;
+import com.s8.api.bytes.MemoryFootprint;
 import com.s8.io.bohr.beryllium.branch.BeOutbound;
 import com.s8.io.bohr.beryllium.branch.BeTable;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
-import com.s8.io.bytes.alpha.ByteOutflow;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**

@@ -1,8 +1,8 @@
 package com.s8.io.bohr.beryllium.demos.examples;
 
-import com.s8.io.bohr.atom.annotations.S8Field;
-import com.s8.io.bohr.atom.annotations.S8ObjectType;
-import com.s8.io.bohr.beryllium.object.BeObject;
+import com.s8.api.objects.annotations.S8Field;
+import com.s8.api.objects.annotations.S8ObjectType;
+import com.s8.api.objects.table.TableS8Object;
 
 
 /**
@@ -11,7 +11,7 @@ import com.s8.io.bohr.beryllium.object.BeObject;
  *
  */
 @S8ObjectType(name = "storage-entry", sub = { MyExtendedStorageEntry.class })
-public class MyStorageEntry extends BeObject {
+public class MyStorageEntry extends TableS8Object {
 
 	
 	public enum Category {

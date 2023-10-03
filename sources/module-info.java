@@ -32,6 +32,8 @@ module com.s8.io.bohr.beryllium {
 	
 	/* </beryllium> */
 	
+	requires transitive com.s8.api;
+	
 	requires transitive com.s8.io.bohr.atom;
 	requires transitive com.s8.io.bytes;
 	requires transitive com.s8.arch.fluor;

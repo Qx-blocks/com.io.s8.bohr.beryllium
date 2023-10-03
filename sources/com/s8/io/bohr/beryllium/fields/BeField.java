@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
+import com.s8.api.bytes.ByteInflow;
+import com.s8.api.bytes.MemoryFootprint;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.atom.S8ShellStructureException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
-import com.s8.io.bohr.beryllium.object.BeObject;
-import com.s8.io.bytes.alpha.ByteInflow;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 /**
  * 
@@ -94,7 +94,7 @@ public abstract class BeField {
 	
 
 
-	public abstract void computeFootprint(BeObject object, MemoryFootprint weight) 
+	public abstract void computeFootprint(TableS8Object object, MemoryFootprint weight) 
 			throws IllegalArgumentException, IllegalAccessException;
 
 	
@@ -116,7 +116,7 @@ public abstract class BeField {
 	 * @throws  
 	 * @throws LthSerialException
 	 */
-	public abstract void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException;
+	public abstract void deepClone(TableS8Object origin, TableS8Object clone) throws IllegalArgumentException, IllegalAccessException;
 
 	/**
 	 * 
@@ -128,7 +128,7 @@ public abstract class BeField {
 	 * @throws LthSerialException
 	 * @throws IOException
 	 */
-	public abstract boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException;
+	public abstract boolean hasDiff(TableS8Object base, TableS8Object update) throws IllegalArgumentException, IllegalAccessException;
 
 
 	/**
@@ -144,11 +144,11 @@ public abstract class BeField {
 	 * @throws IllegalArgumentException 
 	 * @throws IOException
 	 */
-	public abstract BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException;
+	public abstract BeFieldDelta produceDiff(TableS8Object object) throws IllegalArgumentException, IllegalAccessException;
 
 	
 
-	public void print(BeObject object, Writer writer) 
+	public void print(TableS8Object object, Writer writer) 
 			throws IOException, S8ShellStructureException, IllegalArgumentException, IllegalAccessException {
 		writer.append("(");
 		writer.append(printType());
@@ -165,7 +165,7 @@ public abstract class BeField {
 	public abstract String printType();
 
 
-	protected abstract void printValue(BeObject object, Writer writer) 
+	protected abstract void printValue(TableS8Object object, Writer writer) 
 			throws BeIOException, IllegalArgumentException, IllegalAccessException, IOException;
 
 	
@@ -176,7 +176,7 @@ public abstract class BeField {
 	 * @return true is the object has been resolved, false otherwise
 	 * @throws LthSerialException 
 	 */
-	public abstract boolean isValueResolved(BeObject object) throws BeIOException;
+	public abstract boolean isValueResolved(TableS8Object object) throws BeIOException;
 
 	
 }

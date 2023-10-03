@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 
-import com.s8.io.bohr.atom.BOHR_Types;
+import com.s8.api.bohr.BOHR_Types;
+import com.s8.api.bytes.ByteInflow;
+import com.s8.api.bytes.ByteOutflow;
+import com.s8.api.bytes.MemoryFootprint;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeField;
@@ -15,10 +19,6 @@ import com.s8.io.bohr.beryllium.fields.BeFieldParser;
 import com.s8.io.bohr.beryllium.fields.BeFieldProperties;
 import com.s8.io.bohr.beryllium.fields.BeFieldPrototype;
 import com.s8.io.bohr.beryllium.fields.primitives.PrimitiveBeField;
-import com.s8.io.bohr.beryllium.object.BeObject;
-import com.s8.io.bytes.alpha.ByteInflow;
-import com.s8.io.bytes.alpha.ByteOutflow;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**
@@ -77,7 +77,7 @@ public class StringArrayBeField extends PrimitiveArrayBeField {
 
 
 	@Override
-	public void computeFootprint(BeObject object, MemoryFootprint weight) throws IllegalArgumentException, IllegalAccessException {
+	public void computeFootprint(TableS8Object object, MemoryFootprint weight) throws IllegalArgumentException, IllegalAccessException {
 		String[] array = (String[]) field.get(object);
 		if(array!=null) {
 			weight.reportInstance(); // the array object itself	
@@ -91,20 +91,20 @@ public class StringArrayBeField extends PrimitiveArrayBeField {
 
 
 	@Override
-	public void deepClone(BeObject origin, BeObject clone) throws IllegalArgumentException, IllegalAccessException {
+	public void deepClone(TableS8Object origin, TableS8Object clone) throws IllegalArgumentException, IllegalAccessException {
 		String[] array = (String[]) field.get(origin);
 		field.set(clone, clone(array));
 	}
 
 	@Override
-	public boolean hasDiff(BeObject base, BeObject update) throws IllegalArgumentException, IllegalAccessException {
+	public boolean hasDiff(TableS8Object base, TableS8Object update) throws IllegalArgumentException, IllegalAccessException {
 		String[] baseValue = (String[]) field.get(base);
 		String[] updateValue = (String[]) field.get(update);
 		return !areEqual(baseValue, updateValue);
 	}
 
 	@Override
-	public BeFieldDelta produceDiff(BeObject object) throws IllegalArgumentException, IllegalAccessException {
+	public BeFieldDelta produceDiff(TableS8Object object) throws IllegalArgumentException, IllegalAccessException {
 		return new StringArrayBeFieldDelta(this, (String[]) field.get(object));
 	}
 
@@ -159,7 +159,7 @@ public class StringArrayBeField extends PrimitiveArrayBeField {
 
 	
 	@Override
-	protected void printValue(BeObject object, Writer writer) throws IOException, IllegalArgumentException, IllegalAccessException {
+	protected void printValue(TableS8Object object, Writer writer) throws IOException, IllegalArgumentException, IllegalAccessException {
 		String[] array = (String[]) field.get(object);
 		if(array!=null) {
 			boolean isInitialized = false;
@@ -213,7 +213,7 @@ public class StringArrayBeField extends PrimitiveArrayBeField {
 		}
 
 		@Override
-		public void parseValue(BeObject object, ByteInflow inflow) 
+		public void parseValue(TableS8Object object, ByteInflow inflow) 
 				throws IllegalArgumentException, IllegalAccessException, IOException  {
 			field.set(object, deserialize(inflow));
 		}
@@ -270,7 +270,7 @@ public class StringArrayBeField extends PrimitiveArrayBeField {
 
 
 		@Override
-		public void composeValue(BeObject object, ByteOutflow outflow) 
+		public void composeValue(TableS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			serialize(outflow, (String[]) field.get(object));
 		}

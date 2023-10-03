@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.s8.io.bohr.atom.annotations.S8Field;
-import com.s8.io.bohr.atom.annotations.S8ObjectType;
+import com.s8.api.objects.annotations.S8Field;
+import com.s8.api.objects.annotations.S8ObjectType;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.codebase.BeCodebaseBuilder;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.fields.BeField;
 import com.s8.io.bohr.beryllium.fields.BeFieldBuilder;
-import com.s8.io.bohr.beryllium.object.BeObject;
 
 /**
  * 
@@ -144,7 +144,7 @@ public class BeTypeBuilder {
 
 		// is static ?
 		if(!baseType.isMemberClass() || (baseType.isMemberClass() && Modifier.isStatic(mods))) {
-			if(BeObject.class.isAssignableFrom(baseType)) {
+			if(TableS8Object.class.isAssignableFrom(baseType)) {
 				isBuildable = true;
 			}
 			else if(isVerbose) {

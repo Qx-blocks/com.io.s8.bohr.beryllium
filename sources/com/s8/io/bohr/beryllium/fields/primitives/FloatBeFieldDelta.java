@@ -1,9 +1,9 @@
 package com.s8.io.bohr.beryllium.fields.primitives;
 
+import com.s8.api.bytes.MemoryFootprint;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.fields.BeField;
 import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
-import com.s8.io.bohr.beryllium.object.BeObject;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**
@@ -30,7 +30,7 @@ public class FloatBeFieldDelta extends BeFieldDelta {
 
 	
 	@Override
-	public void consume(BeObject object) throws IllegalArgumentException, IllegalAccessException {
+	public void consume(TableS8Object object) throws IllegalArgumentException, IllegalAccessException {
 		field.field.setFloat(object, value);
 	}
 

@@ -1,9 +1,9 @@
 package com.s8.io.bohr.beryllium.fields;
 
-import com.s8.io.bohr.atom.S8BuildException;
-import com.s8.io.bohr.atom.annotations.S8Field;
-import com.s8.io.bohr.atom.annotations.S8Getter;
-import com.s8.io.bohr.atom.annotations.S8Setter;
+import com.s8.api.exceptions.S8BuildException;
+import com.s8.api.objects.annotations.S8Field;
+import com.s8.api.objects.annotations.S8Getter;
+import com.s8.api.objects.annotations.S8Setter;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 
 

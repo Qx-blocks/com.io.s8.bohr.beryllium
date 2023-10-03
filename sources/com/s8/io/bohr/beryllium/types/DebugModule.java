@@ -3,9 +3,9 @@ package com.s8.io.bohr.beryllium.types;
 import java.io.IOException;
 import java.io.Writer;
 
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.atom.S8ShellStructureException;
 import com.s8.io.bohr.beryllium.fields.BeField;
-import com.s8.io.bohr.beryllium.object.BeObject;
 
 
 /**
@@ -45,7 +45,7 @@ public class DebugModule {
 	 * @throws IllegalAccessException 
 	 * @throws IllegalArgumentException 
 	 */
-	public void print(BeObject object, Writer writer) 
+	public void print(TableS8Object object, Writer writer) 
 			throws IOException, S8ShellStructureException, IllegalArgumentException, IllegalAccessException {
 		
 		// advertise class
@@ -79,7 +79,7 @@ public class DebugModule {
 	 * @throws IllegalAccessException 
 	 * @throws IllegalArgumentException 
 	 */
-	public void deepCompare(BeObject left, BeObject right, Writer writer) 
+	public void deepCompare(TableS8Object left, TableS8Object right, Writer writer) 
 			throws IOException, S8ShellStructureException, IllegalArgumentException, IllegalAccessException {
 
 		if(left!=null && right==null) {

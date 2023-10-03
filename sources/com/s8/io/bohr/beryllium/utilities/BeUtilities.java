@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Set;
 
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.branch.BeBranch;
 import com.s8.io.bohr.beryllium.codebase.BeCodebase;
-import com.s8.io.bohr.beryllium.object.BeObject;
 import com.s8.io.bohr.beryllium.types.BeType;
 
 public class BeUtilities {
@@ -30,8 +30,8 @@ public class BeUtilities {
 		
 		for(String id : keys) {
 			
-			BeObject object = branch1.get(id);
-			BeObject objectCopy = branch2.get(id);
+			TableS8Object object = branch1.get(id);
+			TableS8Object objectCopy = branch2.get(id);
 			BeType type = codebase.getType(object);
 			
 			type.deepCompare(object, objectCopy, writer);

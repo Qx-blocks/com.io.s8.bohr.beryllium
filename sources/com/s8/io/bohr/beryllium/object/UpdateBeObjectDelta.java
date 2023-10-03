@@ -3,15 +3,16 @@ package com.s8.io.bohr.beryllium.object;
 import java.io.IOException;
 import java.util.List;
 
-import com.s8.io.bohr.atom.BOHR_Keywords;
-import com.s8.io.bohr.atom.S8Exception;
+import com.s8.api.bohr.BOHR_Keywords;
+import com.s8.api.bytes.ByteOutflow;
+import com.s8.api.bytes.MemoryFootprint;
+import com.s8.api.exceptions.S8IOException;
+import com.s8.api.objects.table.TableS8Object;
 import com.s8.io.bohr.beryllium.branch.BeOutbound;
 import com.s8.io.bohr.beryllium.branch.BeTable;
 import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
 import com.s8.io.bohr.beryllium.types.BeType;
 import com.s8.io.bohr.beryllium.types.BeTypeComposer;
-import com.s8.io.bytes.alpha.ByteOutflow;
-import com.s8.io.bytes.alpha.MemoryFootprint;
 
 
 /**
@@ -79,10 +80,10 @@ public class UpdateBeObjectDelta extends BeObjectDelta {
 
 		try {
 			/* retrieve object */
-			BeObject object = table.objects.get(id);
+			TableS8Object object = table.objects.get(id);
 
 			if(object==null) {
-				throw new S8Exception("failed to retrieve vertex for index: "+id);
+				throw new S8IOException("failed to retrieve vertex for index: "+id);
 			}
 			
 			// consume diff
