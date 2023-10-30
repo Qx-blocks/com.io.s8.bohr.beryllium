@@ -13,7 +13,7 @@ import com.s8.api.exceptions.S8IOException;
 import com.s8.api.objects.annotations.S8Field;
 import com.s8.api.objects.serial.BohrSerializable;
 import com.s8.api.objects.table.TableS8Object;
-import com.s8.io.bohr.atom.serial.BohrSerialUtilities;
+import com.s8.core.io.bohr.atom.serial.BohrSerialUtilities;
 import com.s8.io.bohr.beryllium.exception.BeBuildException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeField;

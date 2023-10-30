@@ -12,7 +12,7 @@ import java.util.Map;
 
 import com.s8.api.bytes.MemoryFootprint;
 import com.s8.api.objects.table.TableS8Object;
-import com.s8.io.bohr.atom.S8ShellStructureException;
+import com.s8.core.io.bohr.atom.S8ShellStructureException;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeField;
 import com.s8.io.bohr.beryllium.fields.BeFieldDelta;

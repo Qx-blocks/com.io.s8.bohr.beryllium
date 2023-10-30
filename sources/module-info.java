@@ -5,7 +5,7 @@
  * @author pierreconvert
  *
  */
-module com.s8.io.bohr.beryllium {
+module com.s8.core.io.bohr.beryllium {
 	
 
 	/* <beryllium> */
@@ -33,7 +33,7 @@ module com.s8.io.bohr.beryllium {
 	/* </beryllium> */
 	
 	requires transitive com.s8.api;
-	requires transitive com.s8.io.bohr.atom;
-	requires transitive com.s8.io.bytes;
+	requires transitive com.s8.core.io.bohr.atom;
+	requires transitive com.s8.core.io.bytes;
 	
 }
