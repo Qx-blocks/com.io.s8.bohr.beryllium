@@ -2,9 +2,9 @@ package com.s8.io.bohr.beryllium.fields;
 
 import java.io.IOException;
 
-import com.s8.api.bohr.BOHR_Properties;
 import com.s8.api.bytes.ByteInflow;
 import com.s8.api.objects.table.TableS8Object;
+import com.s8.core.io.bohr.atom.protocol.BOHR_Properties;
 
 
 /**

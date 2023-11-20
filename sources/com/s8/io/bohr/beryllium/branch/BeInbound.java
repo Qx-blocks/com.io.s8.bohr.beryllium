@@ -1,16 +1,16 @@
 package com.s8.io.bohr.beryllium.branch;
 
-import static com.s8.api.bohr.BOHR_Keywords.CLOSE_JUMP;
-import static com.s8.api.bohr.BOHR_Keywords.CLOSE_SEQUENCE;
-import static com.s8.api.bohr.BOHR_Keywords.CREATE_NODE;
-import static com.s8.api.bohr.BOHR_Keywords.DECLARE_TYPE;
-import static com.s8.api.bohr.BOHR_Keywords.DEFINE_JUMP_COMMENT;
-import static com.s8.api.bohr.BOHR_Keywords.DEFINE_JUMP_TIMESTAMP;
-import static com.s8.api.bohr.BOHR_Keywords.EXPOSE_NODE;
-import static com.s8.api.bohr.BOHR_Keywords.OPEN_JUMP;
-import static com.s8.api.bohr.BOHR_Keywords.OPEN_SEQUENCE;
-import static com.s8.api.bohr.BOHR_Keywords.REMOVE_NODE;
-import static com.s8.api.bohr.BOHR_Keywords.UPDATE_NODE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.CLOSE_JUMP;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.CLOSE_SEQUENCE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.CREATE_NODE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.DECLARE_TYPE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.DEFINE_JUMP_COMMENT;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.DEFINE_JUMP_TIMESTAMP;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.EXPOSE_NODE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.OPEN_JUMP;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.OPEN_SEQUENCE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.REMOVE_NODE;
+import static com.s8.core.io.bohr.atom.protocol.BOHR_Keywords.UPDATE_NODE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.s8.api.bohr.BOHR_Keywords;
 import com.s8.api.bytes.ByteInflow;
+import com.s8.core.io.bohr.atom.protocol.BOHR_Keywords;
 import com.s8.io.bohr.beryllium.codebase.BeCodebase;
 import com.s8.io.bohr.beryllium.exception.BeIOException;
 import com.s8.io.bohr.beryllium.fields.BeFieldDelta;
