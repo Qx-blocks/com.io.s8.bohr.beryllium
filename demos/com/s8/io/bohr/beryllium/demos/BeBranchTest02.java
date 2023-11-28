@@ -6,14 +6,14 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.s8.io.bohr.beryllium.branch.BeBranch;
-import com.s8.io.bohr.beryllium.branch.BeBranchDelta;
-import com.s8.io.bohr.beryllium.codebase.BeCodebase;
+import com.s8.core.bohr.beryllium.branch.BeBranch;
+import com.s8.core.bohr.beryllium.branch.BeBranchDelta;
+import com.s8.core.bohr.beryllium.codebase.BeCodebase;
+import com.s8.core.bohr.beryllium.exception.BeBuildException;
+import com.s8.core.bohr.beryllium.exception.BeIOException;
+import com.s8.core.bohr.beryllium.utilities.BeUtilities;
 import com.s8.io.bohr.beryllium.demos.examples.MyExtendedStorageEntry;
 import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
-import com.s8.io.bohr.beryllium.exception.BeBuildException;
-import com.s8.io.bohr.beryllium.exception.BeIOException;
-import com.s8.io.bohr.beryllium.utilities.BeUtilities;
 
 public class BeBranchTest02 {
 

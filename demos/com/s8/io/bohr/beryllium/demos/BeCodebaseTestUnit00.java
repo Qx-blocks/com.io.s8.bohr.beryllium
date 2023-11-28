@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import com.s8.io.bohr.beryllium.codebase.BeCodebase;
+import com.s8.core.bohr.beryllium.codebase.BeCodebase;
+import com.s8.core.bohr.beryllium.exception.BeBuildException;
+import com.s8.core.bohr.beryllium.fields.BeField;
+import com.s8.core.bohr.beryllium.types.BeType;
 import com.s8.io.bohr.beryllium.demos.examples.MyStorageEntry;
-import com.s8.io.bohr.beryllium.exception.BeBuildException;
-import com.s8.io.bohr.beryllium.fields.BeField;
-import com.s8.io.bohr.beryllium.types.BeType;
 
 public class BeCodebaseTestUnit00 {
 
