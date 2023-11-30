@@ -3,7 +3,7 @@ package com.s8.core.bohr.beryllium.codebase;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import com.s8.api.objects.annotations.S8ObjectType;
+import com.s8.api.annotations.S8ObjectType;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.fields.BeFieldFactory;
 import com.s8.core.bohr.beryllium.types.BeTypeBuilder;

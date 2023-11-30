@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.s8.api.flow.S8Filter;
-import com.s8.api.objects.table.TableS8Object;
+import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.record.objects.S8Filter;
 import com.s8.core.bohr.beryllium.codebase.BeCodebase;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
 import com.s8.core.bohr.beryllium.fields.BeField;
@@ -94,13 +94,13 @@ public class BeBranch {
 	 * @param object
 	 * @throws BeIOException
 	 */
-	public void put(TableS8Object object) throws BeIOException {
+	public void put(RecordS8Object object) throws BeIOException {
 		
 		String id = object.S8_key;
 
 		BeType type = codebase.getType(object);
 
-		TableS8Object previous = table.objects.get(id);
+		RecordS8Object previous = table.objects.get(id);
 		if(previous != null) {
 			BeType previousType = codebase.getType(previous);
 
@@ -120,13 +120,13 @@ public class BeBranch {
 			publishCreate(id, type, object);
 		}
 
-		TableS8Object objectClone = type.deepClone(object);
+		RecordS8Object objectClone = type.deepClone(object);
 
 		table.objects.put(id, objectClone);
 	}
 
 
-	private void publishCreate(String id, BeType type, TableS8Object object) throws BeIOException {
+	private void publishCreate(String id, BeType type, RecordS8Object object) throws BeIOException {
 		List<BeFieldDelta> fieldDeltas = new ArrayList<BeFieldDelta>();
 		BeField[] fields = type.fields;
 		int n = fields.length;
@@ -142,7 +142,7 @@ public class BeBranch {
 
 
 
-	private void publishUpdate(String id, BeType type, TableS8Object previous, TableS8Object object) throws BeIOException {
+	private void publishUpdate(String id, BeType type, RecordS8Object previous, RecordS8Object object) throws BeIOException {
 		boolean hasDelta = false;
 
 		List<BeFieldDelta> fieldDeltas = new ArrayList<BeFieldDelta>();
@@ -193,14 +193,14 @@ public class BeBranch {
 	 * @return
 	 * @throws BeIOException
 	 */
-	public TableS8Object get(String id) throws BeIOException {
-		TableS8Object origin = table.objects.get(id);
+	public RecordS8Object get(String id) throws BeIOException {
+		RecordS8Object origin = table.objects.get(id);
 
 
 		if(origin != null) {
 			BeType type = codebase.getType(origin);
 
-			TableS8Object object = type.deepClone(origin);
+			RecordS8Object object = type.deepClone(origin);
 
 			return object;
 		}
@@ -224,7 +224,7 @@ public class BeBranch {
 					BeType type = codebase.getType(value);
 
 					// object
-					TableS8Object object = type.deepClone(value);
+					RecordS8Object object = type.deepClone(value);
 					
 					// item
 					selection.add((T) object);
@@ -259,7 +259,7 @@ public class BeBranch {
 	 * 
 	 * @param consumer
 	 */
-	public void forEach(Consumer<TableS8Object> consumer) {
+	public void forEach(Consumer<RecordS8Object> consumer) {
 		table.objects.forEach((key, object) -> {
 
 			BeType type = codebase.getType(object);

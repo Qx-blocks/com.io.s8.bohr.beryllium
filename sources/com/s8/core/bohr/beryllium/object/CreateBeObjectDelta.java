@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.objects.table.TableS8Object;
+import com.s8.api.flow.record.objects.RecordS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Keywords;
 import com.s8.core.bohr.beryllium.branch.BeOutbound;
 import com.s8.core.bohr.beryllium.branch.BeTable;
@@ -66,7 +66,7 @@ public class CreateBeObjectDelta extends BeObjectDelta {
 	public void consume(BeTable table) throws BeIOException {
 
 		/* create object and assign object id */
-		TableS8Object object = type.createNewInstance(id);
+		RecordS8Object object = type.createNewInstance(id);
 
 		/* consume diff */
 		type.consumeDiff(object, deltas);

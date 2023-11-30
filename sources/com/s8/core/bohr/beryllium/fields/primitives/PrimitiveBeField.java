@@ -2,8 +2,8 @@ package com.s8.core.bohr.beryllium.fields.primitives;
 
 import java.lang.reflect.Field;
 
-import com.s8.api.objects.annotations.S8Field;
-import com.s8.api.objects.table.TableS8Object;
+import com.s8.api.annotations.S8Field;
+import com.s8.api.flow.record.objects.RecordS8Object;
 import com.s8.core.bohr.beryllium.fields.BeField;
 import com.s8.core.bohr.beryllium.fields.BeFieldBuilder;
 import com.s8.core.bohr.beryllium.fields.BeFieldProperties;
@@ -99,7 +99,7 @@ public abstract class PrimitiveBeField extends BeField {
 	}
 	
 	@Override
-	public boolean isValueResolved(TableS8Object object) {
+	public boolean isValueResolved(RecordS8Object object) {
 		return true; // always resolved
 	}
 	

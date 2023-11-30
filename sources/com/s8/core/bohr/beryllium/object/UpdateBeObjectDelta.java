@@ -6,7 +6,7 @@ import java.util.List;
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
 import com.s8.api.exceptions.S8IOException;
-import com.s8.api.objects.table.TableS8Object;
+import com.s8.api.flow.record.objects.RecordS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Keywords;
 import com.s8.core.bohr.beryllium.branch.BeOutbound;
 import com.s8.core.bohr.beryllium.branch.BeTable;
@@ -80,7 +80,7 @@ public class UpdateBeObjectDelta extends BeObjectDelta {
 
 		try {
 			/* retrieve object */
-			TableS8Object object = table.objects.get(id);
+			RecordS8Object object = table.objects.get(id);
 
 			if(object==null) {
 				throw new S8IOException("failed to retrieve vertex for index: "+id);

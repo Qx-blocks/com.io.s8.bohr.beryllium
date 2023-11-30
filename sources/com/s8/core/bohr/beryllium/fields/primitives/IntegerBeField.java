@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import com.s8.api.bytes.ByteInflow;
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.objects.table.TableS8Object;
+import com.s8.api.flow.record.objects.RecordS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Types;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
@@ -69,20 +69,20 @@ public class IntegerBeField extends PrimitiveBeField {
 	}
 
 	@Override
-	public void computeFootprint(TableS8Object object, MemoryFootprint weight) {
+	public void computeFootprint(RecordS8Object object, MemoryFootprint weight) {
 		weight.reportBytes(4);
 	}
 
 
 	@Override
-	public void deepClone(TableS8Object origin, TableS8Object clone) 
+	public void deepClone(RecordS8Object origin, RecordS8Object clone) 
 			throws IllegalArgumentException, IllegalAccessException {
 		int value = field.getInt(origin);
 		field.setInt(clone, value);
 	}
 
 	@Override
-	public boolean hasDiff(TableS8Object base, TableS8Object update) 
+	public boolean hasDiff(RecordS8Object base, RecordS8Object update) 
 			throws IllegalArgumentException, IllegalAccessException {
 		int baseValue = field.getInt(base);
 		int updateValue = field.getInt(update);
@@ -90,7 +90,7 @@ public class IntegerBeField extends PrimitiveBeField {
 	}
 
 	@Override
-	public BeFieldDelta produceDiff(TableS8Object object) 
+	public BeFieldDelta produceDiff(RecordS8Object object) 
 			throws IllegalArgumentException, IllegalAccessException {
 		return new IntegerBeFieldDelta(this, field.getInt(object));
 	}
@@ -104,7 +104,7 @@ public class IntegerBeField extends PrimitiveBeField {
 
 
 	@Override
-	protected void printValue(TableS8Object object, Writer writer) throws IllegalArgumentException, IllegalAccessException, IOException  {
+	protected void printValue(RecordS8Object object, Writer writer) throws IllegalArgumentException, IllegalAccessException, IOException  {
 		writer.write(Integer.toString(field.getInt(object)));
 	}
 
@@ -139,7 +139,7 @@ public class IntegerBeField extends PrimitiveBeField {
 		}
 
 		@Override
-		public void parseValue(TableS8Object object, ByteInflow inflow) 
+		public void parseValue(RecordS8Object object, ByteInflow inflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			field.setInt(object, deserialize(inflow));
 		}
@@ -225,7 +225,7 @@ public class IntegerBeField extends PrimitiveBeField {
 
 
 		@Override
-		public void composeValue(TableS8Object object, ByteOutflow outflow) 
+		public void composeValue(RecordS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			serialize(outflow, field.getInt(object));
 		}

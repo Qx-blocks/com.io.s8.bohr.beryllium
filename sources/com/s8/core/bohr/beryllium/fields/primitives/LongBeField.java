@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import com.s8.api.bytes.ByteInflow;
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.objects.table.TableS8Object;
+import com.s8.api.flow.record.objects.RecordS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Types;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
@@ -74,26 +74,26 @@ public class LongBeField extends PrimitiveBeField {
 
 	
 	@Override
-	public void computeFootprint(TableS8Object object, MemoryFootprint weight) {
+	public void computeFootprint(RecordS8Object object, MemoryFootprint weight) {
 		weight.reportBytes(8);
 	}
 
 
 	@Override
-	public void deepClone(TableS8Object origin, TableS8Object clone) throws IllegalArgumentException, IllegalAccessException {
+	public void deepClone(RecordS8Object origin, RecordS8Object clone) throws IllegalArgumentException, IllegalAccessException {
 		long value = field.getLong(origin);
 		field.setLong(clone, value);
 	}
 
 	@Override
-	public boolean hasDiff(TableS8Object base, TableS8Object update) throws IllegalArgumentException, IllegalAccessException  {
+	public boolean hasDiff(RecordS8Object base, RecordS8Object update) throws IllegalArgumentException, IllegalAccessException  {
 		long baseValue = field.getLong(base);
 		long updateValue = field.getLong(update);
 		return baseValue != updateValue;
 	}
 
 	@Override
-	public BeFieldDelta produceDiff(TableS8Object object) throws IllegalArgumentException, IllegalAccessException {
+	public BeFieldDelta produceDiff(RecordS8Object object) throws IllegalArgumentException, IllegalAccessException {
 		return new LongBeFieldDelta(this, field.getLong(object));
 	}
 
@@ -106,7 +106,7 @@ public class LongBeField extends PrimitiveBeField {
 
 
 	@Override
-	protected void printValue(TableS8Object object, Writer writer) 
+	protected void printValue(RecordS8Object object, Writer writer) 
 			throws IOException, IllegalArgumentException, IllegalAccessException {
 		writer.write(Long.toString(field.getLong(object)));
 	}
@@ -146,7 +146,7 @@ public class LongBeField extends PrimitiveBeField {
 		}
 
 		@Override
-		public void parseValue(TableS8Object object, ByteInflow inflow) 
+		public void parseValue(RecordS8Object object, ByteInflow inflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			field.setLong(object, deserialize(inflow));
 		}
@@ -241,7 +241,7 @@ public class LongBeField extends PrimitiveBeField {
 
 
 		@Override
-		public void composeValue(TableS8Object object, ByteOutflow outflow) 
+		public void composeValue(RecordS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			serialize(outflow, field.getLong(object));
 		}
