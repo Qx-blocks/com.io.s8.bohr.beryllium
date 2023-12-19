@@ -9,7 +9,7 @@ import com.s8.api.bytes.ByteInflow;
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
 import com.s8.api.exceptions.S8IOException;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.api.serial.BohrSerializable;
 import com.s8.core.bohr.atom.protocol.BOHR_Properties;
 import com.s8.core.bohr.atom.protocol.BOHR_Types;
@@ -112,7 +112,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 
 
 	@Override
-	public void computeFootprint(RecordS8Object object, MemoryFootprint weight) 
+	public void computeFootprint(RowS8Object object, MemoryFootprint weight) 
 			throws IllegalArgumentException, IllegalAccessException {
 		BohrSerializable value = (BohrSerializable) field.get(object);
 		if(value!=null) {
@@ -122,7 +122,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 	}
 
 	@Override
-	public void deepClone(RecordS8Object origin, RecordS8Object clone) 
+	public void deepClone(RowS8Object origin, RowS8Object clone) 
 			throws IllegalArgumentException, IllegalAccessException {
 		BohrSerializable value = (BohrSerializable) field.get(origin);
 		field.set(clone, value.deepClone());
@@ -136,7 +136,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 
 
 	@Override
-	public boolean hasDiff(RecordS8Object base, RecordS8Object update) throws IllegalArgumentException, IllegalAccessException  {
+	public boolean hasDiff(RowS8Object base, RowS8Object update) throws IllegalArgumentException, IllegalAccessException  {
 		
 		@SuppressWarnings("unchecked")
 		T left = (T) field.get(base);
@@ -157,13 +157,13 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 
 
 	@Override
-	public BeFieldDelta produceDiff(RecordS8Object object) throws IllegalArgumentException, IllegalAccessException  {
+	public BeFieldDelta produceDiff(RowS8Object object) throws IllegalArgumentException, IllegalAccessException  {
 		return new S8SerializableBeFieldDelta<>(S8SerializableBeField.this, (BohrSerializable) field.get(object));
 	}
 
 
 	@Override
-	protected void printValue(RecordS8Object object, Writer writer) throws IOException, IllegalArgumentException, IllegalAccessException {
+	protected void printValue(RowS8Object object, Writer writer) throws IOException, IllegalArgumentException, IllegalAccessException {
 		Object value = field.get(object);
 		if(value!=null) {
 			writer.write("(");
@@ -184,7 +184,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 
 
 	@Override
-	public boolean isValueResolved(RecordS8Object object) {
+	public boolean isValueResolved(RowS8Object object) {
 		return true; // always resolved at resolve step in shell
 	}
 
@@ -208,7 +208,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 	private class Parser extends BeFieldParser {
 
 		@Override
-		public void parseValue(RecordS8Object object, ByteInflow inflow) 
+		public void parseValue(RowS8Object object, ByteInflow inflow) 
 				throws IllegalArgumentException, IllegalAccessException, IOException {
 			field.set(object, deserialize(inflow));
 		}
@@ -268,7 +268,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 		}
 
 		@Override
-		public void composeValue(RecordS8Object object, ByteOutflow outflow) 
+		public void composeValue(RowS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			BohrSerializable value = (BohrSerializable) field.get(object);
 			if(value != null) {

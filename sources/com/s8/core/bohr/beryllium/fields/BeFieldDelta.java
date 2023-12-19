@@ -2,7 +2,7 @@ package com.s8.core.bohr.beryllium.fields;
 
 
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 
 
 /**
@@ -26,7 +26,7 @@ public abstract class BeFieldDelta {
 	 * @throws IllegalArgumentException 
 	 * @throws LthSerialException 
 	 */
-	public abstract void consume(RecordS8Object object) throws IllegalArgumentException, IllegalAccessException;
+	public abstract void consume(RowS8Object object) throws IllegalArgumentException, IllegalAccessException;
 	
 	
 	public abstract void computeFootprint(MemoryFootprint weight);

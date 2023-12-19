@@ -2,7 +2,7 @@ package com.s8.io.bohr.beryllium.demos.examples;
 
 import com.s8.api.annotations.S8Field;
 import com.s8.api.annotations.S8ObjectType;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 
 
 /**
@@ -11,7 +11,7 @@ import com.s8.api.flow.record.objects.RecordS8Object;
  *
  */
 @S8ObjectType(name = "storage-entry", sub = { MyExtendedStorageEntry.class })
-public class MyStorageEntry extends RecordS8Object {
+public class MyStorageEntry extends RowS8Object {
 
 	
 	public enum Category {

@@ -3,7 +3,7 @@ package com.s8.core.bohr.beryllium.fields;
 import java.io.IOException;
 
 import com.s8.api.bytes.ByteInflow;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Properties;
 
 
@@ -30,7 +30,7 @@ public abstract class BeFieldParser {
 	 * @throws IllegalArgumentException 
 	 * @throws BkException
 	 */
-	public abstract void parseValue(RecordS8Object object, ByteInflow inflow) throws IOException, IllegalArgumentException, IllegalAccessException;
+	public abstract void parseValue(RowS8Object object, ByteInflow inflow) throws IOException, IllegalArgumentException, IllegalAccessException;
 	
 
 	/**

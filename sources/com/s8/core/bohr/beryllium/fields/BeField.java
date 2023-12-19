@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 
 import com.s8.api.bytes.ByteInflow;
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.atom.S8ShellStructureException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
 
@@ -94,7 +94,7 @@ public abstract class BeField {
 	
 
 
-	public abstract void computeFootprint(RecordS8Object object, MemoryFootprint weight) 
+	public abstract void computeFootprint(RowS8Object object, MemoryFootprint weight) 
 			throws IllegalArgumentException, IllegalAccessException;
 
 	
@@ -116,7 +116,7 @@ public abstract class BeField {
 	 * @throws  
 	 * @throws LthSerialException
 	 */
-	public abstract void deepClone(RecordS8Object origin, RecordS8Object clone) throws IllegalArgumentException, IllegalAccessException;
+	public abstract void deepClone(RowS8Object origin, RowS8Object clone) throws IllegalArgumentException, IllegalAccessException;
 
 	/**
 	 * 
@@ -128,7 +128,7 @@ public abstract class BeField {
 	 * @throws LthSerialException
 	 * @throws IOException
 	 */
-	public abstract boolean hasDiff(RecordS8Object base, RecordS8Object update) throws IllegalArgumentException, IllegalAccessException;
+	public abstract boolean hasDiff(RowS8Object base, RowS8Object update) throws IllegalArgumentException, IllegalAccessException;
 
 
 	/**
@@ -144,11 +144,11 @@ public abstract class BeField {
 	 * @throws IllegalArgumentException 
 	 * @throws IOException
 	 */
-	public abstract BeFieldDelta produceDiff(RecordS8Object object) throws IllegalArgumentException, IllegalAccessException;
+	public abstract BeFieldDelta produceDiff(RowS8Object object) throws IllegalArgumentException, IllegalAccessException;
 
 	
 
-	public void print(RecordS8Object object, Writer writer) 
+	public void print(RowS8Object object, Writer writer) 
 			throws IOException, S8ShellStructureException, IllegalArgumentException, IllegalAccessException {
 		writer.append("(");
 		writer.append(printType());
@@ -165,7 +165,7 @@ public abstract class BeField {
 	public abstract String printType();
 
 
-	protected abstract void printValue(RecordS8Object object, Writer writer) 
+	protected abstract void printValue(RowS8Object object, Writer writer) 
 			throws BeIOException, IllegalArgumentException, IllegalAccessException, IOException;
 
 	
@@ -176,7 +176,7 @@ public abstract class BeField {
 	 * @return true is the object has been resolved, false otherwise
 	 * @throws LthSerialException 
 	 */
-	public abstract boolean isValueResolved(RecordS8Object object) throws BeIOException;
+	public abstract boolean isValueResolved(RowS8Object object) throws BeIOException;
 
 	
 }

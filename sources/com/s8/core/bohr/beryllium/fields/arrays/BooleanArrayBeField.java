@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import com.s8.api.bytes.ByteInflow;
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Types;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
@@ -76,7 +76,7 @@ public class BooleanArrayBeField extends PrimitiveArrayBeField {
 
 
 	@Override
-	public void computeFootprint(RecordS8Object object, MemoryFootprint weight) throws IllegalArgumentException, IllegalAccessException {
+	public void computeFootprint(RowS8Object object, MemoryFootprint weight) throws IllegalArgumentException, IllegalAccessException {
 		boolean[] array = (boolean[]) field.get(object);
 		if(array!=null) {
 			weight.reportInstance(); // the array object itself	
@@ -86,14 +86,14 @@ public class BooleanArrayBeField extends PrimitiveArrayBeField {
 
 
 	@Override
-	public void deepClone(RecordS8Object origin, RecordS8Object clone) 
+	public void deepClone(RowS8Object origin, RowS8Object clone) 
 			throws IllegalArgumentException, IllegalAccessException {
 		boolean[] array = (boolean[]) field.get(origin);
 		field.set(clone, clone(array));
 	}
 
 	@Override
-	public boolean hasDiff(RecordS8Object base, RecordS8Object update) 
+	public boolean hasDiff(RowS8Object base, RowS8Object update) 
 			throws IllegalArgumentException, IllegalAccessException {
 		boolean[] baseValue = (boolean[]) field.get(base);
 		boolean[] updateValue = (boolean[]) field.get(update);
@@ -101,7 +101,7 @@ public class BooleanArrayBeField extends PrimitiveArrayBeField {
 	}
 
 	@Override
-	public BeFieldDelta produceDiff(RecordS8Object object) 
+	public BeFieldDelta produceDiff(RowS8Object object) 
 			throws IllegalArgumentException, IllegalAccessException {
 		return new BooleanArrayBeFieldDelta(this, (boolean[]) field.get(object));
 	}
@@ -157,7 +157,7 @@ public class BooleanArrayBeField extends PrimitiveArrayBeField {
 
 
 	@Override
-	protected void printValue(RecordS8Object object, Writer writer) 
+	protected void printValue(RowS8Object object, Writer writer) 
 			throws IOException, IllegalArgumentException, IllegalAccessException {
 		boolean[] array = (boolean[]) field.get(object);
 		if(array!=null) {
@@ -210,7 +210,7 @@ public class BooleanArrayBeField extends PrimitiveArrayBeField {
 		}
 
 		@Override
-		public void parseValue(RecordS8Object object, ByteInflow inflow) 
+		public void parseValue(RowS8Object object, ByteInflow inflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			field.set(object, deserialize(inflow));
 		}
@@ -266,7 +266,7 @@ public class BooleanArrayBeField extends PrimitiveArrayBeField {
 
 
 		@Override
-		public void composeValue(RecordS8Object object, ByteOutflow outflow) throws IOException, IllegalArgumentException, IllegalAccessException {
+		public void composeValue(RowS8Object object, ByteOutflow outflow) throws IOException, IllegalArgumentException, IllegalAccessException {
 			serialize(outflow, (boolean[]) field.get(object));
 		}
 		

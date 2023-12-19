@@ -1,7 +1,7 @@
 package com.s8.core.bohr.beryllium.fields.objects;
 
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.beryllium.fields.BeField;
 import com.s8.core.bohr.beryllium.fields.BeFieldDelta;
 import com.s8.core.bohr.beryllium.object.BeRef;
@@ -37,7 +37,7 @@ public class S8RefBeFieldDelta extends BeFieldDelta {
 
 	
 	@Override
-	public void consume(RecordS8Object object) throws IllegalArgumentException, IllegalAccessException {
+	public void consume(RowS8Object object) throws IllegalArgumentException, IllegalAccessException {
 		field.field.set(object, ref);
 	}
 

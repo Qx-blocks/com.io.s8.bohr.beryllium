@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.s8.api.annotations.S8Field;
 import com.s8.api.annotations.S8ObjectType;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.beryllium.codebase.BeCodebaseBuilder;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.fields.BeField;
@@ -144,7 +144,7 @@ public class BeTypeBuilder {
 
 		// is static ?
 		if(!baseType.isMemberClass() || (baseType.isMemberClass() && Modifier.isStatic(mods))) {
-			if(RecordS8Object.class.isAssignableFrom(baseType)) {
+			if(RowS8Object.class.isAssignableFrom(baseType)) {
 				isBuildable = true;
 			}
 			else if(isVerbose) {

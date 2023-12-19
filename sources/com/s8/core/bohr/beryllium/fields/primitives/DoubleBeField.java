@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import com.s8.api.bytes.ByteInflow;
 import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Types;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
@@ -72,13 +72,13 @@ public class DoubleBeField extends PrimitiveBeField {
 
 
 	@Override
-	public void computeFootprint(RecordS8Object object, MemoryFootprint weight) {
+	public void computeFootprint(RowS8Object object, MemoryFootprint weight) {
 		weight.reportBytes(8);
 	}
 
 
 	@Override
-	public void deepClone(RecordS8Object origin, RecordS8Object clone) 
+	public void deepClone(RowS8Object origin, RowS8Object clone) 
 			throws IllegalArgumentException, IllegalAccessException  {
 		double value = field.getDouble(origin);
 		field.setDouble(clone, value);
@@ -86,7 +86,7 @@ public class DoubleBeField extends PrimitiveBeField {
 
 
 	@Override
-	public boolean hasDiff(RecordS8Object base, RecordS8Object update) 
+	public boolean hasDiff(RowS8Object base, RowS8Object update) 
 			throws IllegalArgumentException, IllegalAccessException {
 		double baseValue = field.getDouble(base);
 		double updateValue = field.getDouble(update);
@@ -94,7 +94,7 @@ public class DoubleBeField extends PrimitiveBeField {
 	}
 
 	@Override
-	public BeFieldDelta produceDiff(RecordS8Object object) 
+	public BeFieldDelta produceDiff(RowS8Object object) 
 			throws IllegalArgumentException, IllegalAccessException {
 		return new DoubleBeFieldDelta(this, field.getDouble(object));
 	}
@@ -107,7 +107,7 @@ public class DoubleBeField extends PrimitiveBeField {
 
 
 	@Override
-	protected void printValue(RecordS8Object object, Writer writer) 
+	protected void printValue(RowS8Object object, Writer writer) 
 			throws IllegalArgumentException, IllegalAccessException, IOException {
 		writer.write(Double.toString(field.getDouble(object)));
 	}
@@ -146,7 +146,7 @@ public class DoubleBeField extends PrimitiveBeField {
 		}
 
 		@Override
-		public void parseValue(RecordS8Object object, ByteInflow inflow)
+		public void parseValue(RowS8Object object, ByteInflow inflow)
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			field.setDouble(object, deserialize(inflow));
 		}
@@ -202,7 +202,7 @@ public class DoubleBeField extends PrimitiveBeField {
 
 
 		@Override
-		public void composeValue(RecordS8Object object, ByteOutflow outflow) 
+		public void composeValue(RowS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
 			serialize(outflow, field.getDouble(object));
 		}

@@ -3,7 +3,7 @@ package com.s8.core.bohr.beryllium.fields;
 import java.io.IOException;
 
 import com.s8.api.bytes.ByteOutflow;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.atom.protocol.BOHR_Keywords;
 
 
@@ -39,7 +39,7 @@ public abstract class BeFieldComposer {
 	 * 
 	 * }
 	 */
-	public abstract void composeValue(RecordS8Object object, ByteOutflow outflow) throws IOException, IllegalArgumentException, IllegalAccessException;
+	public abstract void composeValue(RowS8Object object, ByteOutflow outflow) throws IOException, IllegalArgumentException, IllegalAccessException;
 
 
 
@@ -112,7 +112,7 @@ public abstract class BeFieldComposer {
 	 * @throws IllegalAccessException 
 	 * @throws IllegalArgumentException 
 	 */
-	public void compose(RecordS8Object object, ByteOutflow outflow) throws IOException, IllegalArgumentException, IllegalAccessException {
+	public void compose(RowS8Object object, ByteOutflow outflow) throws IOException, IllegalArgumentException, IllegalAccessException {
 		publishFieldHeader(outflow);
 		composeValue(object, outflow);
 	}

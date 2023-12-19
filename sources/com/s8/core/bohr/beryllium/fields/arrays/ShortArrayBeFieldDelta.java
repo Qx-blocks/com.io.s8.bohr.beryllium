@@ -1,7 +1,7 @@
 package com.s8.core.bohr.beryllium.fields.arrays;
 
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.beryllium.fields.BeField;
 import com.s8.core.bohr.beryllium.fields.BeFieldDelta;
 
@@ -29,7 +29,7 @@ public class ShortArrayBeFieldDelta extends BeFieldDelta {
 	public @Override BeField getField() { return field; }
 
 	@Override
-	public void consume(RecordS8Object object) throws IllegalArgumentException, IllegalAccessException  {
+	public void consume(RowS8Object object) throws IllegalArgumentException, IllegalAccessException  {
 		field.field.set(object, value);
 	}
 

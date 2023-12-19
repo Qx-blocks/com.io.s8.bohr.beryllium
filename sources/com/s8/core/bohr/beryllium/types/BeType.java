@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.s8.api.bytes.MemoryFootprint;
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 import com.s8.core.bohr.atom.S8ShellStructureException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
 import com.s8.core.bohr.beryllium.fields.BeField;
@@ -116,7 +116,7 @@ public class BeType {
 	 * @param object
 	 * @param footprint
 	 */
-	public void computeFootprint(RecordS8Object object, MemoryFootprint footprint) {
+	public void computeFootprint(RowS8Object object, MemoryFootprint footprint) {
 		footprint.reportInstance();
 		fieldsByName.forEach((name, handler) -> {  
 			try {
@@ -136,9 +136,9 @@ public class BeType {
 	 * @return
 	 * @throws LthSerialException
 	 */
-	public RecordS8Object createNewInstance(String id) throws BeIOException {
+	public RowS8Object createNewInstance(String id) throws BeIOException {
 		try {
-			return (RecordS8Object) constructor.newInstance(new Object[]{id});
+			return (RowS8Object) constructor.newInstance(new Object[]{id});
 		}
 		catch (InstantiationException 
 				| IllegalAccessException 
@@ -175,9 +175,9 @@ public class BeType {
 	 * @return
 	 * @throws LthSerialException
 	 */
-	public RecordS8Object deepClone(RecordS8Object origin) throws BeIOException {
+	public RowS8Object deepClone(RowS8Object origin) throws BeIOException {
 		try {
-			RecordS8Object clone = createNewInstance(origin.S8_key);
+			RowS8Object clone = createNewInstance(origin.S8_key);
 			for(BeField field : fields) {
 
 				field.deepClone(origin, clone);
@@ -214,7 +214,7 @@ public class BeType {
 	 * @throws IOException
 	 * @throws S8ShellStructureException 
 	 */
-	public void print(RecordS8Object object, Writer writer) throws BeIOException {
+	public void print(RowS8Object object, Writer writer) throws BeIOException {
 		try {
 			debugModule.print(object, writer);
 		} 
@@ -233,7 +233,7 @@ public class BeType {
 	 * @throws IOException
 	 * @throws S8ShellStructureException 
 	 */
-	public void deepCompare(RecordS8Object left, RecordS8Object right, Writer writer) throws BeIOException {
+	public void deepCompare(RowS8Object left, RowS8Object right, Writer writer) throws BeIOException {
 		try {
 			debugModule.deepCompare(left, right, writer);
 		} 
@@ -261,7 +261,7 @@ public class BeType {
 	 * @param scope
 	 * @throws IOException
 	 */
-	public void consumeDiff(RecordS8Object object, List<BeFieldDelta> deltas) throws BeIOException {
+	public void consumeDiff(RowS8Object object, List<BeFieldDelta> deltas) throws BeIOException {
 		for(BeFieldDelta delta : deltas) {
 			try {
 				delta.consume(object);
@@ -285,7 +285,7 @@ public class BeType {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<BeFieldDelta> produceCreateDeltas(RecordS8Object object) throws IOException {
+	public List<BeFieldDelta> produceCreateDeltas(RowS8Object object) throws IOException {
 		int n = fields.length;
 		List<BeFieldDelta> deltas = new ArrayList<BeFieldDelta>(n);
 		for(int i=0; i<n; i++) {

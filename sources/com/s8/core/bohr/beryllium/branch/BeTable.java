@@ -3,7 +3,7 @@ package com.s8.core.bohr.beryllium.branch;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.s8.api.flow.record.objects.RecordS8Object;
+import com.s8.api.flow.table.objects.RowS8Object;
 
 
 /**
@@ -15,7 +15,7 @@ import com.s8.api.flow.record.objects.RecordS8Object;
 public class BeTable {
 
 	
-	public final Map<String, RecordS8Object> objects = new HashMap<>();
+	public final Map<String, RowS8Object> objects = new HashMap<>();
 
 
 	public BeTable() {
