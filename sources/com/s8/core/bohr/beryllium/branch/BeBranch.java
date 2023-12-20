@@ -24,8 +24,16 @@ import com.s8.core.bohr.beryllium.types.BeType;
  */
 public class BeBranch {
 
-
+	/**
+	 * 
+	 */
 	public final BeCodebase codebase;
+	
+
+	/**
+	 * 
+	 */
+	public final String tableId;
 
 
 	/**
@@ -46,9 +54,10 @@ public class BeBranch {
 	 * 
 	 * @param codebase
 	 */
-	public BeBranch(BeCodebase codebase) {
+	public BeBranch(BeCodebase codebase, String tableId) {
 		super();
 		this.codebase = codebase;
+		this.tableId = tableId;
 	}
 
 

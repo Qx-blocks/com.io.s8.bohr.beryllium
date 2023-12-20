@@ -29,7 +29,7 @@ public class BeBranchTest02 {
 		BeCodebase codebase = BeCodebase.from(MyStorageEntry.class);
 
 
-		BeBranch branch = new BeBranch(codebase);
+		BeBranch branch = new BeBranch(codebase, "b");
 		
 		int n = 256;
 		List<String> identifiers = new ArrayList<>();
@@ -48,7 +48,7 @@ public class BeBranchTest02 {
 		
 		
 
-		BeBranch branchCopy = new BeBranch(codebase);
+		BeBranch branchCopy = new BeBranch(codebase, "b");
 		deltas.forEach(delta -> {
 			try {
 				branchCopy.pushDelta(delta);

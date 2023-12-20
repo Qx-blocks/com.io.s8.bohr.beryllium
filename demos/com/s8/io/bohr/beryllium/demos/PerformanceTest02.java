@@ -15,7 +15,7 @@ public class PerformanceTest02 {
 		BeCodebase codebase = BeCodebase.from(MyStorageEntry.class);
 
 
-		BeBranch branch = new BeBranch(codebase);
+		BeBranch branch = new BeBranch(codebase, "b");
 		
 		int n = 65536;
 		MyStorageEntry entry;
