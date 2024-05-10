@@ -2,7 +2,7 @@ package com.s8.core.bohr.beryllium.fields.objects;
 
 import com.s8.api.bytes.MemoryFootprint;
 import com.s8.api.flow.table.objects.RowS8Object;
-import com.s8.api.serial.BohrSerializable;
+import com.s8.api.serial.S8Serializable;
 import com.s8.core.bohr.beryllium.fields.BeField;
 import com.s8.core.bohr.beryllium.fields.BeFieldDelta;
 
@@ -14,16 +14,16 @@ import com.s8.core.bohr.beryllium.fields.BeFieldDelta;
  * Copyright (C) 2022, Pierre Convert. All rights reserved.
  * 
  */
-public class S8SerializableBeFieldDelta<T extends BohrSerializable> extends BeFieldDelta {
+public class S8SerializableBeFieldDelta<T extends S8Serializable> extends BeFieldDelta {
 	
 	
 	public final S8SerializableBeField<T> field;
 	
-	public final BohrSerializable value;
+	public final S8Serializable value;
 
 	
 	
-	public S8SerializableBeFieldDelta(S8SerializableBeField<T> field, BohrSerializable value) {
+	public S8SerializableBeFieldDelta(S8SerializableBeField<T> field, S8Serializable value) {
 		super();
 		this.field = field;
 		this.value = value;

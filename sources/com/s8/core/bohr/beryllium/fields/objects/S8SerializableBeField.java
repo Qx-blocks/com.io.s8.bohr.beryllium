@@ -10,10 +10,11 @@ import com.s8.api.bytes.ByteOutflow;
 import com.s8.api.bytes.MemoryFootprint;
 import com.s8.api.exceptions.S8IOException;
 import com.s8.api.flow.table.objects.RowS8Object;
-import com.s8.api.serial.BohrSerializable;
+import com.s8.api.serial.S8SerialPrototype;
+import com.s8.api.serial.S8Serializable;
 import com.s8.core.bohr.atom.protocol.BOHR_Properties;
 import com.s8.core.bohr.atom.protocol.BOHR_Types;
-import com.s8.core.bohr.atom.serial.BohrSerialUtilities;
+import com.s8.core.bohr.atom.serial.S8SerialUtilities;
 import com.s8.core.bohr.beryllium.exception.BeBuildException;
 import com.s8.core.bohr.beryllium.exception.BeIOException;
 import com.s8.core.bohr.beryllium.fields.BeField;
@@ -32,7 +33,7 @@ import com.s8.core.bohr.beryllium.fields.BeFieldPrototype;
  * Copyright (C) 2022, Pierre Convert. All rights reserved.
  * 
  */
-public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
+public class S8SerializableBeField<T extends S8Serializable> extends BeField {
 
 
 
@@ -42,7 +43,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 		@Override
 		public BeFieldProperties captureField(Field field) throws BeBuildException {
 			Class<?> fieldType = field.getType();
-			if(BohrSerializable.class.isAssignableFrom(fieldType)){
+			if(S8Serializable.class.isAssignableFrom(fieldType)){
 				S8Field annotation = field.getAnnotation(S8Field.class);
 				if(annotation != null) {
 					BeFieldProperties properties = new BeFieldProperties(this, fieldType, BeFieldProperties.FIELD);
@@ -85,7 +86,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 
 
 
-	private BohrSerializable.BohrSerialPrototype<T> deserializer;
+	private S8SerialPrototype<T> deserializer;
 
 
 
@@ -99,7 +100,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 		super(ordinal, properties, handler);
 		Class<?> baseType = properties.baseType;
 		try {
-			deserializer = BohrSerialUtilities.getDeserializer(baseType);
+			deserializer = S8SerialUtilities.getPrototype(baseType);
 		} 
 		catch (S8IOException e) {
 			e.printStackTrace();
@@ -114,7 +115,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 	@Override
 	public void computeFootprint(RowS8Object object, MemoryFootprint weight) 
 			throws IllegalArgumentException, IllegalAccessException {
-		BohrSerializable value = (BohrSerializable) field.get(object);
+		S8Serializable value = (S8Serializable) field.get(object);
 		if(value!=null) {
 			weight.reportInstance();
 			weight.reportBytes(value.computeFootprint());	
@@ -124,7 +125,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 	@Override
 	public void deepClone(RowS8Object origin, RowS8Object clone) 
 			throws IllegalArgumentException, IllegalAccessException {
-		BohrSerializable value = (BohrSerializable) field.get(origin);
+		S8Serializable value = (S8Serializable) field.get(origin);
 		field.set(clone, value.deepClone());
 	}
 
@@ -158,7 +159,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 
 	@Override
 	public BeFieldDelta produceDiff(RowS8Object object) throws IllegalArgumentException, IllegalAccessException  {
-		return new S8SerializableBeFieldDelta<>(S8SerializableBeField.this, (BohrSerializable) field.get(object));
+		return new S8SerializableBeFieldDelta<>(S8SerializableBeField.this, (S8Serializable) field.get(object));
 	}
 
 
@@ -224,7 +225,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 			return new S8SerializableBeFieldDelta<>(S8SerializableBeField.this, deserialize(inflow));
 		}
 
-		private BohrSerializable deserialize(ByteInflow inflow) throws IOException {
+		private S8Serializable deserialize(ByteInflow inflow) throws IOException {
 			int props = inflow.getUInt8();
 			if(isNonNull(props)) {
 				return deserializer.deserialize(inflow);
@@ -270,7 +271,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 		@Override
 		public void composeValue(RowS8Object object, ByteOutflow outflow) 
 				throws IOException, IllegalArgumentException, IllegalAccessException {
-			BohrSerializable value = (BohrSerializable) field.get(object);
+			S8Serializable value = (S8Serializable) field.get(object);
 			if(value != null) {
 				outflow.putUInt8(BOHR_Properties.IS_NON_NULL_PROPERTIES_BIT);
 				value.serialize(outflow);
@@ -283,7 +284,7 @@ public class S8SerializableBeField<T extends BohrSerializable> extends BeField {
 		@Override
 		public void publishValue(BeFieldDelta delta, ByteOutflow outflow) throws IOException {
 			@SuppressWarnings("unchecked")
-			BohrSerializable value = ((S8SerializableBeFieldDelta<T>) delta).value;
+			S8Serializable value = ((S8SerializableBeFieldDelta<T>) delta).value;
 			if(value != null) {
 				outflow.putUInt8(BOHR_Properties.IS_NON_NULL_PROPERTIES_BIT);
 				value.serialize(outflow);
